@@ -10,6 +10,7 @@ import {
   ArrowDownIcon,
   ArrowPathIcon,
   MagnifyingGlassIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { useCategories } from "@/hooks/useCategories";
@@ -68,6 +69,13 @@ export function SortAndFilter() {
     router.push(`/products?${params.toString()}`, { scroll: false });
   };
 
+  const handleClearSearch = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("q");
+    params.set("page", "1");
+    router.push(`/products?${params.toString()}`, { scroll: false });
+  };
+
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-lg shadow-black/5 ring-1 ring-black/6 transition-shadow duration-200 hover:shadow-xl hover:shadow-black/5">
       {/* Search row */}
@@ -91,9 +99,19 @@ export function SortAndFilter() {
               defaultValue={searchQuery}
               key={searchQuery}
               placeholder="Search by product name"
-              className="w-full rounded-xl border border-border bg-background py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:border-foreground/30 hover:border-foreground/20"
+              className="w-full rounded-xl border border-border bg-background py-3 pl-11 pr-10 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:border-foreground/30 hover:border-foreground/20"
               aria-label="Search by product name"
             />
+            {searchQuery.trim() !== "" && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+                aria-label="Clear search and show all products"
+              >
+                <XMarkIcon className="w-5 h-5" aria-hidden />
+              </button>
+            )}
           </div>
           <button
             type="submit"

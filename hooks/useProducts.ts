@@ -39,9 +39,10 @@ export function useProducts({ category, sortOrder, page, search }: UseProductsPa
 
   const sorted =
     query.data != null ? sortByPrice(query.data, sortOrder) : undefined;
+  const searchTerm = search != null ? String(search).trim() : "";
   const filtered =
-    sorted != null && search?.trim()
-      ? filterBySearch(sorted, search)
+    sorted != null && searchTerm !== ""
+      ? filterBySearch(sorted, searchTerm)
       : sorted ?? undefined;
   const totalCount = filtered?.length ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));

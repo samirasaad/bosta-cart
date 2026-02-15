@@ -19,10 +19,10 @@ export function ProductList() {
   const sortOrder = (searchParams.get("sort") as "asc" | "desc") ?? "asc";
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const search = searchParams.get("q") || null;
-  const listSectionRef = useRef<HTMLDivElement>(null);
+  const filtersRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = listSectionRef.current;
+    const el = filtersRef.current;
     if (!el) return;
     const id = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -30,7 +30,7 @@ export function ProductList() {
       });
     });
     return () => cancelAnimationFrame(id);
-  }, [page, search, category, sortOrder]);
+  }, [page]);
 
   const {
     data: products,
@@ -48,7 +48,7 @@ export function ProductList() {
       <>
         <FeaturedProductsCarousel />
         <DealsSection />
-        <div ref={listSectionRef} className="scroll-mt-24 sticky top-20 z-10 mb-6">
+        <div ref={filtersRef} className="scroll-mt-24 mb-6">
           <SortAndFilter />
         </div>
         <ProductListSkeleton />
@@ -61,7 +61,7 @@ export function ProductList() {
       <>
         <FeaturedProductsCarousel />
         <DealsSection />
-        <div ref={listSectionRef} className="scroll-mt-24 sticky top-20 z-10 mb-6">
+        <div ref={filtersRef} className="scroll-mt-24 mb-6">
           <SortAndFilter />
         </div>
         <ErrorMessage
@@ -81,7 +81,7 @@ export function ProductList() {
       <>
         <FeaturedProductsCarousel />
         <DealsSection />
-        <div ref={listSectionRef} className="scroll-mt-24 sticky top-20 z-10 mb-6">
+        <div ref={filtersRef} className="scroll-mt-24 mb-6">
           <SortAndFilter />
         </div>
         <div className="rounded-lg border border-border bg-card p-8 text-center">
@@ -104,9 +104,9 @@ export function ProductList() {
     <>
       <FeaturedProductsCarousel />
       <DealsSection />
-      <div ref={listSectionRef} className="scroll-mt-24 sticky top-20 z-10 mb-6">
-        <SortAndFilter />
-      </div>
+<div ref={filtersRef} className="scroll-mt-24 mb-6">
+          <SortAndFilter />
+        </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
