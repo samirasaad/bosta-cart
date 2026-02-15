@@ -82,6 +82,7 @@ export function Pagination({
         {currentPage > 1 ? (
           <Link
             href={getPageHref(currentPage - 1)}
+            scroll={false}
             className={inactiveClass}
             aria-label="Previous page"
           >
@@ -112,6 +113,7 @@ export function Pagination({
               <Link
                 key={p}
                 href={getPageHref(p)}
+                scroll={false}
                 className={p === currentPage ? activeClass : inactiveClass}
                 aria-label={p === currentPage ? `Page ${p}, current` : `Page ${p}`}
                 aria-current={p === currentPage ? "page" : undefined}
@@ -126,6 +128,7 @@ export function Pagination({
         {currentPage < totalPages ? (
           <Link
             href={getPageHref(currentPage + 1)}
+            scroll={false}
             className={inactiveClass}
             aria-label="Next page"
           >

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useProducts } from "@/hooks/useProducts";
@@ -17,6 +18,19 @@ export function ProductList() {
   const category = searchParams.get("category") || null;
   const sortOrder = (searchParams.get("sort") as "asc" | "desc") ?? "asc";
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+  const search = searchParams.get("q") || null;
+  const listSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = listSectionRef.current;
+    if (!el) return;
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [page, search, category, sortOrder]);
 
   const {
     data: products,
@@ -27,14 +41,16 @@ export function ProductList() {
     totalPages,
     currentPage,
     totalCount,
-  } = useProducts({ category, sortOrder, page });
+  } = useProducts({ category, sortOrder, page, search });
 
   if (isLoading) {
     return (
       <>
         <FeaturedProductsCarousel />
         <DealsSection />
-        <SortAndFilter />
+        <div ref={listSectionRef} className="scroll-mt-24 sticky top-20 z-10 mb-6">
+          <SortAndFilter />
+        </div>
         <ProductListSkeleton />
       </>
     );
@@ -45,7 +61,9 @@ export function ProductList() {
       <>
         <FeaturedProductsCarousel />
         <DealsSection />
-        <SortAndFilter />
+        <div ref={listSectionRef} className="scroll-mt-24 sticky top-20 z-10 mb-6">
+          <SortAndFilter />
+        </div>
         <ErrorMessage
           message={
             typeof error === "object" && error && "message" in error
@@ -63,12 +81,18 @@ export function ProductList() {
       <>
         <FeaturedProductsCarousel />
         <DealsSection />
-        <SortAndFilter />
+        <div ref={listSectionRef} className="scroll-mt-24 sticky top-20 z-10 mb-6">
+          <SortAndFilter />
+        </div>
         <div className="rounded-lg border border-border bg-card p-8 text-center">
-          <p className="text-muted-foreground">No products found.</p>
+          <p className="text-muted-foreground">
+            {search
+              ? "No products match your search."
+              : "No products found."}
+          </p>
           <Link href="/products" className="mt-4 inline-block">
             <Button variant="outline" size="sm">
-              Clear filters
+              {search ? "Clear search" : "Clear filters"}
             </Button>
           </Link>
         </div>
@@ -80,7 +104,9 @@ export function ProductList() {
     <>
       <FeaturedProductsCarousel />
       <DealsSection />
-      <SortAndFilter />
+      <div ref={listSectionRef} className="scroll-mt-24 sticky top-20 z-10 mb-6">
+        <SortAndFilter />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
@@ -92,10 +118,10 @@ export function ProductList() {
             currentPage={currentPage}
             totalPages={totalPages}
             totalCount={totalCount}
-            getPageHref={(page) =>
+            getPageHref={(p) =>
               `/products?${new URLSearchParams({
                 ...Object.fromEntries(searchParams.entries()),
-                page: String(page),
+                page: String(p),
               }).toString()}`
             }
             ariaLabel="Products pagination"

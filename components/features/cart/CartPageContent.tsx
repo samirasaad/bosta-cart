@@ -16,10 +16,6 @@ export function CartPageContent() {
     return (
       <div className="max-w-md mx-auto text-center py-12">
         <div className="w-48 h-48 mx-auto mb-4 flex items-center justify-center min-h-[192px] rounded-lg bg-muted/30 overflow-hidden">
-          {/* <ShoppingCartIcon
-            className="w-28 h-28 text-muted-foreground animate-pulse"
-            aria-hidden
-          /> */}
           <EmptyCart />
         </div>
         <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
