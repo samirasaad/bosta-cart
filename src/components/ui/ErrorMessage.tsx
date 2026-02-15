@@ -1,3 +1,4 @@
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { HTMLAttributes } from "react";
 
 interface ErrorMessageProps extends HTMLAttributes<HTMLDivElement> {
@@ -19,7 +20,10 @@ export function ErrorMessage({
       className={`rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive ${className}`}
       {...props}
     >
-      <p className="font-semibold">{title}</p>
+      <p className="font-semibold inline-flex items-center gap-2">
+        <ExclamationTriangleIcon className="w-5 h-5 shrink-0" aria-hidden />
+        {title}
+      </p>
       <p className="mt-1 text-sm opacity-90">{message}</p>
       {onRetry && (
         <button

@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { Button } from "@/components/ui/Button";
 import type { CartItem as CartItemType } from "@/lib/types";
+
+const iconClass = "w-4 h-4 shrink-0";
 
 interface CartItemProps {
   item: CartItemType;
@@ -37,8 +40,9 @@ export function CartItem({ item }: CartItemProps) {
             size="sm"
             onClick={() => updateQuantity(item.productId, item.quantity - 1)}
             aria-label="Decrease quantity"
+            className="p-2"
           >
-            −
+            <MinusIcon className={iconClass} aria-hidden />
           </Button>
           <span className="w-8 text-center font-medium" aria-live="polite">
             {item.quantity}
@@ -48,8 +52,9 @@ export function CartItem({ item }: CartItemProps) {
             size="sm"
             onClick={() => updateQuantity(item.productId, item.quantity + 1)}
             aria-label="Increase quantity"
+            className="p-2"
           >
-            +
+            <PlusIcon className={iconClass} aria-hidden />
           </Button>
         </div>
         <p className="font-semibold text-foreground min-w-[4rem] text-right">
@@ -59,9 +64,10 @@ export function CartItem({ item }: CartItemProps) {
           variant="ghost"
           size="sm"
           onClick={() => removeItem(item.productId)}
-          className="text-destructive hover:text-destructive"
+          className="text-destructive hover:text-destructive inline-flex items-center gap-1.5"
           aria-label="Remove from cart"
         >
+          <TrashIcon className={iconClass} aria-hidden />
           Remove
         </Button>
       </div>

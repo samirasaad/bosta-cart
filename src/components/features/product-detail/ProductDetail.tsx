@@ -2,12 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowLeftIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { useProduct } from "@/hooks/useProduct";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+
+const iconClass = "w-5 h-5 shrink-0";
 
 interface ProductDetailProps {
   productId: string;
@@ -68,15 +71,18 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             <div className="flex flex-col sm:flex-row gap-3 mt-6">
               <Link
                 href="/products"
-                className="inline-flex items-center justify-center font-medium transition-colors px-6 py-3 text-lg rounded-lg border-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
+                className="inline-flex items-center justify-center gap-2 font-medium transition-colors px-6 py-3 text-lg rounded-lg border-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
               >
+                <ArrowLeftIcon className={iconClass} aria-hidden />
                 Back to Products
               </Link>
               <Button
                 variant="primary"
                 size="lg"
                 onClick={() => addItem(product)}
+                className="inline-flex items-center gap-2"
               >
+                <ShoppingCartIcon className={iconClass} aria-hidden />
                 Add to cart
               </Button>
             </div>

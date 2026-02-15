@@ -1,8 +1,11 @@
 "use client";
 
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import Link from "next/link";
+
+const iconClass = "w-5 h-5 shrink-0";
 
 export function CartSummary() {
   const items = useCartStore((s) => s.items);
@@ -23,8 +26,9 @@ export function CartSummary() {
         </p>
         <Link
           href="/products"
-          className="inline-flex w-full items-center justify-center font-medium transition-colors px-4 py-2 rounded-md border-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
+          className="inline-flex w-full items-center justify-center gap-2 font-medium transition-colors px-4 py-2 rounded-md border-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
         >
+          <ArrowLeftIcon className={iconClass} aria-hidden />
           Continue shopping
         </Link>
       </CardContent>

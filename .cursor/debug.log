@@ -1,0 +1,3 @@
+{"location":"client.ts:request","message":"login request","data":{"hasAuthHeader":false,"contentType":"application/json"},"timestamp":1771160629231,"runId":"login-401-v2","hypothesisId":"A"}
+{"location":"client.ts:response-error","message":"login error","data":{"status":401,"dataType":"string","dataPreview":"username or password is incorrect","messageSet":"username or password is incorrect"},"timestamp":1771160629611,"runId":"login-401-v2","hypothesisId":"B"}
+{"location":"LoginForm.tsx:catch","message":"login catch","data":{"messageSetInUI":"username or password is incorrect"},"timestamp":1771160629612,"runId":"login-401-v2","hypothesisId":"C"}

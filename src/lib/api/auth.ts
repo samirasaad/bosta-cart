@@ -7,6 +7,6 @@ export interface LoginPayload {
 }
 
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
-  const { data } = await apiClient.post<LoginResponse>("/auth/login", payload);
+  const { data } = await apiClient.post<LoginResponse>("/auth/login",JSON.stringify(payload));
   return data;
 }

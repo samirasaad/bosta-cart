@@ -17,7 +17,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     if (typeof window === "undefined") return;
     if (!token) {
       const redirect = encodeURIComponent(pathname ?? "/");
-      router.replace(`/login?redirect=${redirect}`);
+      router.replace(`/auth/login?redirect=${redirect}`);
     }
   }, [token, pathname, router]);
 

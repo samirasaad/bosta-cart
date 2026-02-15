@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { UserPlusIcon } from "@heroicons/react/24/outline";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+
+const iconClass = "w-5 h-5 shrink-0";
 
 const SIGNUP_STORAGE_KEY = "signup_credentials";
 
@@ -39,7 +42,7 @@ export function SignupForm() {
           JSON.stringify({ username: username.trim(), password })
         );
       }
-      router.push("/login?from=signup");
+      router.push("/auth/login?from=signup");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -48,7 +51,7 @@ export function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       {error && (
         <ErrorMessage message={error} title="Sign up failed" />
       )}
@@ -94,7 +97,9 @@ export function SignupForm() {
         fullWidth
         isLoading={isLoading}
         disabled={isLoading}
+        className="inline-flex items-center justify-center gap-2"
       >
+        <UserPlusIcon className={iconClass} aria-hidden />
         Sign up
       </Button>
     </form>

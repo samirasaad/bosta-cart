@@ -1,9 +1,12 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { FunnelIcon, ArrowsUpDownIcon } from "@heroicons/react/24/outline";
 import { Select } from "@/components/ui/Select";
 import { useCategories } from "@/hooks/useCategories";
 import type { SortOrder } from "@/hooks/useProducts";
+
+const iconClass = "w-5 h-5 shrink-0";
 
 const SORT_OPTIONS: { value: SortOrder; label: string }[] = [
   { value: "asc", label: "Price: Low to High" },
@@ -36,8 +39,14 @@ export function SortAndFilter() {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <div className="flex-1 min-w-0">
+        <label htmlFor="filter-category" className="block text-sm font-medium text-foreground mb-1">
+          <span className="inline-flex items-center gap-1.5">
+            <FunnelIcon className={iconClass} aria-hidden />
+            Category
+          </span>
+        </label>
         <Select
-          label="Category"
+          id="filter-category"
           options={categoryOptions}
           value={category}
           placeholder="All categories"
@@ -48,8 +57,14 @@ export function SortAndFilter() {
         />
       </div>
       <div className="flex-1 min-w-0">
+        <label htmlFor="filter-sort" className="block text-sm font-medium text-foreground mb-1">
+          <span className="inline-flex items-center gap-1.5">
+            <ArrowsUpDownIcon className={iconClass} aria-hidden />
+            Sort by price
+          </span>
+        </label>
         <Select
-          label="Sort by price"
+          id="filter-sort"
           options={SORT_OPTIONS}
           value={sortOrder}
           onChange={(e) =>

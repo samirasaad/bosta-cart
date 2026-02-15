@@ -2,9 +2,21 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  ShoppingBagIcon,
+  Squares2X2Icon,
+  PlusCircleIcon,
+  ShoppingCartIcon,
+  UserCircleIcon,
+  ArrowRightOnRectangleIcon,
+  ArrowLeftOnRectangleIcon,
+  UserPlusIcon,
+} from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { Button } from "@/components/ui/Button";
+
+const iconClass = "w-5 h-5 shrink-0";
 
 export function Header() {
   const pathname = usePathname();
@@ -24,35 +36,39 @@ export function Header() {
       <div className="container mx-auto px-4 flex h-14 md:h-16 items-center justify-between gap-4">
         <Link
           href="/products"
-          className="text-lg font-semibold text-foreground hover:opacity-80"
+          className="inline-flex items-center gap-2 text-lg font-semibold text-foreground hover:opacity-80"
         >
+          <ShoppingBagIcon className={iconClass} aria-hidden />
           Bosta Cart
         </Link>
         <nav className="flex items-center gap-2 md:gap-4" aria-label="Main">
           <Link
             href="/products"
-            className={`text-sm font-medium transition-colors hover:opacity-80 ${
+            className={`inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
               pathname === "/products" ? "text-foreground" : "text-muted-foreground"
             }`}
           >
+            <Squares2X2Icon className={iconClass} aria-hidden />
             Products
           </Link>
           {token ? (
             <>
               <Link
                 href="/products/new"
-                className={`text-sm font-medium transition-colors hover:opacity-80 ${
+                className={`inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
                   pathname === "/products/new"
                     ? "text-foreground"
                     : "text-muted-foreground"
                 }`}
               >
+                <PlusCircleIcon className={iconClass} aria-hidden />
                 New Product
               </Link>
               <Link
                 href="/cart"
-                className="relative text-sm font-medium transition-colors hover:opacity-80 text-muted-foreground"
+                className="relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 text-muted-foreground"
               >
+                <ShoppingCartIcon className={iconClass} aria-hidden />
                 Cart
                 {itemCount > 0 && (
                   <span
@@ -63,36 +79,41 @@ export function Header() {
                   </span>
                 )}
               </Link>
-              <span className="text-sm text-muted-foreground hidden sm:inline">
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+                <UserCircleIcon className={iconClass} aria-hidden />
                 {user?.username ?? "User"}
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="text-muted-foreground"
+                className="text-muted-foreground inline-flex items-center gap-1.5"
               >
+                <ArrowRightOnRectangleIcon className={iconClass} aria-hidden />
                 Logout
               </Button>
             </>
           ) : (
             <>
               <Link
-                href="/login"
-                className="text-sm font-medium text-muted-foreground hover:opacity-80"
+                href="/auth/login"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:opacity-80"
               >
+                <ArrowLeftOnRectangleIcon className={iconClass} aria-hidden />
                 Login
               </Link>
               <Link
-                href="/signup"
-                className="text-sm font-medium text-muted-foreground hover:opacity-80"
+                href="/auth/signup"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:opacity-80"
               >
+                <UserPlusIcon className={iconClass} aria-hidden />
                 Sign up
               </Link>
               <Link
                 href="/cart"
-                className="relative text-sm font-medium transition-colors hover:opacity-80 text-muted-foreground"
+                className="relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 text-muted-foreground"
               >
+                <ShoppingCartIcon className={iconClass} aria-hidden />
                 Cart
                 {itemCount > 0 && (
                   <span

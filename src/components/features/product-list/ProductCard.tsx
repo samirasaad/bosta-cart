@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { EyeIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import {
   Card,
   CardContent,
@@ -12,6 +13,8 @@ import {
 import { Button } from "@/components/ui/Button";
 import { useCartStore } from "@/lib/stores/cartStore";
 import type { Product } from "@/lib/types";
+
+const iconClass = "w-4 h-4 shrink-0";
 
 interface ProductCardProps {
   product: Product;
@@ -53,16 +56,18 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardFooter className="flex flex-col sm:flex-row gap-2 pt-0">
         <Link
           href={`/products/${product.id}`}
-          className={linkButtonClass}
+          className={`${linkButtonClass} inline-flex items-center justify-center gap-2`}
         >
+          <EyeIcon className={iconClass} aria-hidden />
           View Details
         </Link>
         <Button
           variant="outline"
           size="sm"
           onClick={() => addItem(product)}
-          className="flex-1"
+          className="flex-1 inline-flex items-center justify-center gap-2"
         >
+          <ShoppingCartIcon className={iconClass} aria-hidden />
           Add to cart
         </Button>
       </CardFooter>

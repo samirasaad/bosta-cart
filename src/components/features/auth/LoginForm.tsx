@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { login } from "@/lib/api/auth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+
+const iconClass = "w-5 h-5 shrink-0";
 
 export function LoginForm() {
   const router = useRouter();
@@ -44,7 +47,7 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       {error && (
         <ErrorMessage message={error} title="Login failed" />
       )}
@@ -75,7 +78,9 @@ export function LoginForm() {
         fullWidth
         isLoading={isLoading}
         disabled={isLoading}
+        className="inline-flex items-center justify-center gap-2"
       >
+        <ArrowRightEndOnRectangleIcon className={iconClass} aria-hidden />
         Log in
       </Button>
     </form>

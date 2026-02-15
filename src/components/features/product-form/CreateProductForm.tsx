@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { PlusCircleIcon, CheckCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useCategories } from "@/hooks/useCategories";
 import { useCreateProduct } from "@/hooks/useCreateProduct";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -9,6 +10,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+
+const iconClass = "w-5 h-5 shrink-0";
 
 interface FormErrors {
   title?: string;
@@ -78,6 +81,7 @@ export function CreateProductForm() {
     return (
       <Card className="max-w-lg mx-auto">
         <CardContent className="p-6 text-center">
+          <CheckCircleIcon className="w-12 h-12 mx-auto text-foreground mb-3" aria-hidden />
           <p className="text-lg font-medium text-foreground">
             Product created successfully. Redirecting to products...
           </p>
@@ -89,7 +93,10 @@ export function CreateProductForm() {
   return (
     <Card className="max-w-xl mx-auto">
       <CardHeader>
-        <CardTitle>Create Product</CardTitle>
+        <CardTitle className="inline-flex items-center gap-2">
+          <PlusCircleIcon className={iconClass} aria-hidden />
+          Create Product
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -168,7 +175,9 @@ export function CreateProductForm() {
               isLoading={createProduct.isPending}
               disabled={createProduct.isPending || categoriesLoading}
               fullWidth
+              className="inline-flex items-center justify-center gap-2"
             >
+              <PlusCircleIcon className={iconClass} aria-hidden />
               Create Product
             </Button>
             <Button
@@ -177,7 +186,9 @@ export function CreateProductForm() {
               size="lg"
               onClick={() => router.push("/products")}
               disabled={createProduct.isPending}
+              className="inline-flex items-center justify-center gap-2"
             >
+              <XMarkIcon className={iconClass} aria-hidden />
               Cancel
             </Button>
           </div>

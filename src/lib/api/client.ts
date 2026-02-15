@@ -21,12 +21,14 @@ apiClient.interceptors.request.use((config) => {
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<{ message?: string }>) => {
+  (error: AxiosError<{ message?: string } | string>) => {
+    const data = error.response?.data;
+    const message =
+      (typeof data === "string" ? data : (data as { message?: string } | undefined)?.message) ??
+      error.message ??
+      "An unexpected error occurred";
     const apiError: ApiError = {
-      message:
-        error.response?.data?.message ??
-        error.message ??
-        "An unexpected error occurred",
+      message,
       status: error.response?.status,
     };
     return Promise.reject(apiError);
