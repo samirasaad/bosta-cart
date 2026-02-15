@@ -6,10 +6,11 @@ import { ArrowLeftIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { useProduct } from "@/hooks/useProduct";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { Button } from "@/components/ui/Button";
-import { Spinner } from "@/components/ui/Spinner";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { ProductDetailSkeleton } from "./ProductDetailSkeleton";
 import { StarRating } from "@/components/ui/StarRating";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { RelatedProducts } from "./RelatedProducts";
 import type { Product } from "@/lib/types";
 
 const iconClass = "w-5 h-5 shrink-0";
@@ -33,11 +34,7 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <Spinner size="lg" />
-      </div>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (isError || !product) {
@@ -117,6 +114,7 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
           </div>
         </div>
       </Card>
+      <RelatedProducts currentProduct={product} />
     </div>
   );
 }

@@ -7,14 +7,14 @@ const iconClass = "w-5 h-5 shrink-0";
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-border bg-muted/30 ">
-      <div className="container mx-auto px-3 py-5 flex justify-between align-center">
+      <div className="container mx-auto px-3 py-5 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link
             href="/products"
             className="inline-flex items-center gap-2 text-sm font-semibold text-foreground hover:opacity-80 transition-opacity"
           >
             <ShoppingBagIcon className={iconClass} aria-hidden />
-            Bosta Cart
+            {env.siteName}
           </Link>
           <nav className="flex items-center gap-6" aria-label="Footer">
             <Link

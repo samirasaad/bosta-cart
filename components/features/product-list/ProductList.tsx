@@ -6,6 +6,8 @@ import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "./ProductCard";
 import { ProductListSkeleton } from "./ProductListSkeleton";
 import { SortAndFilter } from "./SortAndFilter";
+import { FeaturedProductsCarousel } from "./FeaturedProductsCarousel";
+import { DealsSection } from "./DealsSection";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
@@ -30,6 +32,8 @@ export function ProductList() {
   if (isLoading) {
     return (
       <>
+        <FeaturedProductsCarousel />
+        <DealsSection />
         <SortAndFilter />
         <ProductListSkeleton />
       </>
@@ -39,6 +43,8 @@ export function ProductList() {
   if (isError) {
     return (
       <>
+        <FeaturedProductsCarousel />
+        <DealsSection />
         <SortAndFilter />
         <ErrorMessage
           message={
@@ -55,6 +61,8 @@ export function ProductList() {
   if (!products?.length) {
     return (
       <>
+        <FeaturedProductsCarousel />
+        <DealsSection />
         <SortAndFilter />
         <div className="rounded-lg border border-border bg-card p-8 text-center">
           <p className="text-muted-foreground">No products found.</p>
@@ -70,6 +78,8 @@ export function ProductList() {
 
   return (
     <>
+      <FeaturedProductsCarousel />
+      <DealsSection />
       <SortAndFilter />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {products.map((product) => (

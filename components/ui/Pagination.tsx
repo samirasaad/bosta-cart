@@ -88,8 +88,12 @@ export function Pagination({
             <ChevronLeftIcon className={iconClass} aria-hidden />
           </Link>
         ) : (
-          <span className={disabledClass} aria-hidden>
-            <ChevronLeftIcon className={iconClass} />
+          <span
+            className={disabledClass}
+            aria-disabled="true"
+            aria-label="Previous page (no previous page)"
+          >
+            <ChevronLeftIcon className={iconClass} aria-hidden />
           </span>
         )}
 
@@ -128,8 +132,12 @@ export function Pagination({
             <ChevronRightIcon className={iconClass} aria-hidden />
           </Link>
         ) : (
-          <span className={disabledClass} aria-hidden>
-            <ChevronRightIcon className={iconClass} />
+          <span
+            className={disabledClass}
+            aria-disabled="true"
+            aria-label="Next page (no next page)"
+          >
+            <ChevronRightIcon className={iconClass} aria-hidden />
           </span>
         )}
       </div>

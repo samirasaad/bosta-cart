@@ -29,7 +29,12 @@ export function Header() {
   const logout = useAuthStore((s) => s.logout);
   const itemCount = useCartStore((s) => s.getItemCount());
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!userMenuOpen) return;
@@ -69,7 +74,7 @@ export function Header() {
           <Link
             href="/products"
             className={`inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
-              pathname === "/products" ? "text-foreground" : "text-muted-foreground"
+              pathname === "/products" ? "font-semibold text-foreground" : "text-muted-foreground"
             }`}
           >
             <Squares2X2Icon className={iconClass} aria-hidden />
@@ -81,7 +86,7 @@ export function Header() {
                 href="/products/new"
                 className={`inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
                   pathname === "/products/new"
-                    ? "text-foreground"
+                    ? "font-semibold text-foreground"
                     : "text-muted-foreground"
                 }`}
               >
@@ -90,7 +95,9 @@ export function Header() {
               </Link>
               <Link
                 href="/cart"
-                className="relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 text-muted-foreground"
+                className={`relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
+                  pathname === "/cart" ? "font-semibold text-foreground" : "text-muted-foreground"
+                }`}
               >
                 <ShoppingCartIcon className={iconClass} aria-hidden />
                 Cart
@@ -125,7 +132,8 @@ export function Header() {
                     role="menu"
                     aria-label="User menu"
                   >
-                    <div className="px-3 py-2 text-sm text-muted-foreground border-b border-border">
+                    <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground border-b border-border">
+                      <UserCircleIcon className={iconClass} aria-hidden />
                       <span className="font-medium text-foreground">{user?.username ?? "User"}</span>
                     </div>
                     <button
@@ -145,25 +153,31 @@ export function Header() {
             <>
               <Link
                 href="/auth/login"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:opacity-80"
+                className={`inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
+                  pathname === "/auth/login" ? "font-semibold text-foreground" : "text-muted-foreground"
+                }`}
               >
                 <ArrowLeftOnRectangleIcon className={iconClass} aria-hidden />
                 Login
               </Link>
               <Link
                 href="/auth/signup"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:opacity-80"
+                className={`inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
+                  pathname === "/auth/signup" ? "font-semibold text-foreground" : "text-muted-foreground"
+                }`}
               >
                 <UserPlusIcon className={iconClass} aria-hidden />
                 Sign up
               </Link>
               <Link
                 href="/cart"
-                className="relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 text-muted-foreground"
+                className={`relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
+                  pathname === "/cart" ? "font-semibold text-foreground" : "text-muted-foreground"
+                }`}
               >
                 <ShoppingCartIcon className={iconClass} aria-hidden />
                 Cart
-                {itemCount > 0 && (
+                {mounted && itemCount > 0 && (
                   <span
                     className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground text-background text-xs px-1"
                     aria-label={`${itemCount} items in cart`}

@@ -35,28 +35,30 @@ export function CartItem({ item }: CartItemProps) {
         </p>
       </div>
       <div className="flex items-center justify-between sm:justify-end gap-4">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
+        <div className="inline-flex items-center rounded-lg border border-border bg-background overflow-hidden shadow-sm">
+          <button
+            type="button"
             onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+            disabled={item.quantity <= 1}
             aria-label="Decrease quantity"
-            className="p-2"
+            className="flex items-center justify-center w-10 h-10 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-inset cursor-pointer"
           >
             <MinusIcon className={iconClass} aria-hidden />
-          </Button>
-          <span className="w-8 text-center font-medium" aria-live="polite">
+          </button>
+          <span
+            className="min-w-10 px-2 py-2 text-center text-sm font-semibold tabular-nums border-x border-border bg-muted/30"
+            aria-live="polite"
+          >
             {item.quantity}
           </span>
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            type="button"
             onClick={() => updateQuantity(item.productId, item.quantity + 1)}
             aria-label="Increase quantity"
-            className="p-2"
+            className="flex items-center justify-center w-10 h-10 text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-inset cursor-pointer"
           >
             <PlusIcon className={iconClass} aria-hidden />
-          </Button>
+          </button>
         </div>
         <p className="font-semibold text-foreground min-w-[4rem] text-right">
           ${(item.price * item.quantity).toFixed(2)}

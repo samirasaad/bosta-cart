@@ -26,9 +26,12 @@ export function CartSummary() {
         </p>
         <Link
           href="/products"
-          className="inline-flex w-full items-center justify-center gap-2 font-medium transition-colors px-4 py-2 rounded-md border-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
+          className="group inline-flex w-full items-center justify-center gap-2 font-medium px-4 py-2.5 rounded-lg border-2 border-foreground text-foreground hover:bg-foreground hover:text-background transition-all duration-300 hover:scale-[1.02] hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <ArrowLeftIcon className={iconClass} aria-hidden />
+          <ArrowLeftIcon
+            className={`${iconClass} transition-transform duration-300 group-hover:-translate-x-1`}
+            aria-hidden
+          />
           Continue shopping
         </Link>
       </CardContent>
