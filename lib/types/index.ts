@@ -18,6 +18,13 @@ export interface CartItem {
   quantity: number;
 }
 
+export interface WishlistItem {
+  productId: number;
+  title: string;
+  image: string;
+  price: number;
+}
+
 export interface User {
   id?: number;
   username?: string;

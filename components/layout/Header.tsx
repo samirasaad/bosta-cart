@@ -15,9 +15,11 @@ import {
   ChevronDownIcon,
   Bars3Icon,
   XMarkIcon,
+  HeartIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useCartStore } from "@/lib/stores/cartStore";
+import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import { env } from "@/lib/env";
 
 const iconClass = "w-5 h-5 shrink-0 ";
@@ -34,6 +36,7 @@ export function Header() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const itemCount = useCartStore((s) => s.getItemCount());
+  const wishlistCount = useWishlistStore((s) => s.getCount());
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -86,6 +89,7 @@ export function Header() {
   };
 
   const closeMobile = () => setMobileMenuOpen(false);
+  const closeUserMenu = () => setUserMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -181,6 +185,21 @@ export function Header() {
                       <UserCircleIcon className={iconClass} aria-hidden />
                       <span className="font-medium text-foreground">{user?.username ?? "User"}</span>
                     </div>
+                    <Link
+                      href="/wishlist"
+                      onClick={closeUserMenu}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-left text-foreground hover:bg-muted cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
+                      role="menuitem"
+                      aria-label={wishlistCount > 0 ? `${wishlistCount} items in wishlist` : "My wishlist"}
+                    >
+                      <HeartIcon className={iconClass} aria-hidden />
+                      <span>My wishlist</span>
+                      {wishlistCount > 0 && (
+                        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-foreground text-background text-xs px-1">
+                          {wishlistCount}
+                        </span>
+                      )}
+                    </Link>
                     <button
                       type="button"
                       onClick={handleLogout}
@@ -276,6 +295,22 @@ export function Header() {
                     aria-label={`${itemCount} items in cart`}
                   >
                     {itemCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/wishlist"
+                onClick={closeMobile}
+                className={`flex items-center gap-2 py-3 px-3 rounded-lg ${navLinkClass(pathname === "/wishlist")}`}
+              >
+                <HeartIcon className={iconClass} aria-hidden />
+                My wishlist
+                {wishlistCount > 0 && (
+                  <span
+                    className="ml-auto flex h-6 min-w-6 items-center justify-center rounded-full bg-foreground text-background text-xs px-1.5"
+                    aria-label={`${wishlistCount} items in wishlist`}
+                  >
+                    {wishlistCount}
                   </span>
                 )}
               </Link>

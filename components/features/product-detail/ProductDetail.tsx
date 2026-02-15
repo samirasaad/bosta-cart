@@ -2,9 +2,12 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeftIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { useProduct } from "@/hooks/useProduct";
+import { useAuthStore } from "@/lib/stores/authStore";
 import { useCartStore } from "@/lib/stores/cartStore";
+import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { ProductDetailSkeleton } from "./ProductDetailSkeleton";
@@ -23,7 +26,10 @@ interface ProductDetailProps {
 export function ProductDetail({ productId, initialProduct }: ProductDetailProps) {
   const router = useRouter();
   const { data: product, isLoading, isError, error, refetch } = useProduct(productId, initialProduct);
+  const token = useAuthStore((s) => s.token);
   const addItem = useCartStore((s) => s.addItem);
+  const toggleWishlist = useWishlistStore((s) => s.toggleItem);
+  const isInWishlist = useWishlistStore((s) => s.isInWishlist(Number(productId)));
 
   const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
@@ -109,6 +115,22 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
                   />
                   Add to cart
                 </Button>
+                {token && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => toggleWishlist(product)}
+                    className="group inline-flex items-center justify-center gap-2"
+                    aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+                  >
+                    {isInWishlist ? (
+                      <HeartIconSolid className={`${iconClass} text-red-500 transition-transform duration-200 ease-out group-hover:scale-125 group-active:scale-95`} aria-hidden />
+                    ) : (
+                      <HeartIcon className={`${iconClass} transition-transform duration-200 ease-out group-hover:scale-125 group-active:scale-95`} aria-hidden />
+                    )}
+                    {isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+                  </Button>
+                )}
               </div>
             </CardContent>
           </div>

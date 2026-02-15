@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { EyeIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import {
   Card,
   CardContent,
@@ -12,7 +13,9 @@ import {
 } from "@/components/ui/Card";
 import { StarRating } from "@/components/ui/StarRating";
 import { Button } from "@/components/ui/Button";
+import { useAuthStore } from "@/lib/stores/authStore";
 import { useCartStore } from "@/lib/stores/cartStore";
+import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import type { Product } from "@/lib/types";
 
 const iconClass = "w-4 h-4 shrink-0";
@@ -23,7 +26,10 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const token = useAuthStore((s) => s.token);
   const addItem = useCartStore((s) => s.addItem);
+  const toggleWishlist = useWishlistStore((s) => s.toggleItem);
+  const isInWishlist = useWishlistStore((s) => s.isInWishlist(product.id));
 
   return (
     <Card className=" flex flex-col h-full">
@@ -69,6 +75,20 @@ export function ProductCard({ product }: ProductCardProps) {
         >
           <EyeIcon className={`${iconClass} ${iconAnim}`} aria-hidden />
         </Link>
+        {token && (
+          <button
+            type="button"
+            onClick={() => toggleWishlist(product)}
+            className="group inline-flex items-center justify-center h-10 w-10 rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-background hover:border-foreground/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+            aria-label={isInWishlist ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
+          >
+            {isInWishlist ? (
+              <HeartIconSolid className={`${iconClass} ${iconAnim} text-red-500`} aria-hidden />
+            ) : (
+              <HeartIcon className={`${iconClass} ${iconAnim}`} aria-hidden />
+            )}
+          </button>
+        )}
         <Button
           variant="primary"
           size="sm"
