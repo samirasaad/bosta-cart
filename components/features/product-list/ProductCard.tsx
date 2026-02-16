@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { EyeIcon, ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
@@ -33,6 +34,7 @@ export function ProductCard({ product, isNew = false, overlayActions }: ProductC
   const addItem = useCartStore((s) => s.addItem);
   const toggleWishlist = useWishlistStore((s) => s.toggleItem);
   const isInWishlist = useWishlistStore((s) => s.isInWishlist(product.id));
+  const [imgError, setImgError] = useState(false);
 
   return (
     <Card
@@ -50,12 +52,13 @@ export function ProductCard({ product, isNew = false, overlayActions }: ProductC
         className="block aspect-square relative bg-muted"
       >
         <Image
-          src={product.image}
+          src={imgError ? "/icon.svg" : product.image}
           alt={product.title}
           fill
           className="object-contain p-2"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           unoptimized
+          onError={() => setImgError(true)}
         />
         {overlayActions && (
           <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon, ShoppingCartIcon, HeartIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -29,6 +30,7 @@ interface ProductDetailProps {
 export function ProductDetail({ productId, initialProduct }: ProductDetailProps) {
   const router = useRouter();
   const localProducts = useLocalProductsStore((s) => s.items);
+  const [imgError, setImgError] = useState(false);
   const numericId = Number(productId);
   const localProduct =
     !Number.isNaN(numericId)
@@ -113,15 +115,16 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
       <Card className="overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
           <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
-          <Image
-            src={effectiveProduct.image}
-            alt={effectiveProduct.title}
-            fill
-            className="object-contain p-4"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            priority
-            unoptimized
-          />
+            <Image
+              src={imgError ? "/icon.svg" : effectiveProduct.image}
+              alt={effectiveProduct.title}
+              fill
+              className="object-contain p-4"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+              unoptimized
+              onError={() => setImgError(true)}
+            />
           </div>
           <div className="flex flex-col">
             <CardHeader className="p-0">

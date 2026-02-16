@@ -207,8 +207,7 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
               size="lg"
               isLoading={isSubmitting || createPending}
               disabled={isSubmitting || createPending || categoriesLoading}
-              fullWidth
-              className="inline-flex items-center justify-center gap-2"
+              className="inline-flex items-center justify-center gap-2 flex-1"
             >
               <PlusCircleIcon className={iconClass} aria-hidden />
               {isEditMode ? "Save changes" : "Create Product"}
@@ -219,7 +218,7 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
               size="lg"
               onClick={() => router.back()}
               disabled={createPending}
-              className="inline-flex items-center justify-center gap-2"
+              className="inline-flex items-center justify-center gap-2 flex-1"
             >
               <XMarkIcon className={iconClass} aria-hidden />
               Cancel
