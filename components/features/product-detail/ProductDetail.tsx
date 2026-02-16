@@ -59,6 +59,27 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
   const effectiveProduct = product ?? localProduct ?? initialProduct ?? null;
   const isOwned = !!localProduct;
 
+  // #region agent log
+  fetch("http://127.0.0.1:7242/ingest/236bc653-0054-4a73-9c0a-28effcb1fbbd", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      location: "components/features/product-detail/ProductDetail.tsx:effectiveProduct",
+      message: "ProductDetail render state",
+      data: {
+        productId,
+        hasLocalProduct: !!localProduct,
+        hasInitialProduct: !!initialProduct,
+        hasQueryProduct: !!product,
+        isOwned,
+      },
+      timestamp: Date.now(),
+      runId: "initial",
+      hypothesisId: "H1",
+    }),
+  }).catch(() => {});
+  // #endregion agent log
+
   if (isLoading && !effectiveProduct) {
     return <ProductDetailSkeleton />;
   }
@@ -151,7 +172,7 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
               <p className=" font-semibold text-foreground mt-2">
                 ${effectiveProduct.price.toFixed(2)}
               </p>
-              <p className="text-muted-foreground mt-4 flex-1 break-all">
+              <p className="text-muted-foreground mt-4 break-all">
                 {effectiveProduct.description}
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 mt-6">

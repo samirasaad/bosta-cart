@@ -75,7 +75,7 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
         },
       });
       reset();
-      router.push("/my-products");
+      router.back();
       return;
     }
 

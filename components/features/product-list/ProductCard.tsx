@@ -72,6 +72,11 @@ export function ProductCard({ product, isNew = false, overlayActions }: ProductC
         <p className="text-sm text-muted-foreground capitalize">
           {product.category}
         </p>
+        {product.description && (
+          <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+            {product.description}
+          </p>
+        )}
         {product.rating != null && (
           <StarRating
             rate={product.rating.rate}
