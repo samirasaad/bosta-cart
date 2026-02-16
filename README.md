@@ -14,7 +14,7 @@ This project demonstrates **production-level frontend architecture**, scalable c
 
 ## 📸 Screenshots
 
-
+![login](./demo/login-video.webm)
 
 <img width="1866" height="3702" alt="home" src="https://github.com/user-attachments/assets/5b63575a-5ec0-4791-add3-0a8a0265629d" />
 
