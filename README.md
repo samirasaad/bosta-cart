@@ -53,7 +53,7 @@ This project demonstrates **production-level frontend architecture**, scalable c
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-08-42" src="https://github.com/user-attachments/assets/70fe054c-5827-453a-a6b2-2c9aff7b9b73" />
 
 
-                          <img width="488" height="1013" alt="Screenshot from 2026-02-16 17-23-46" src="https://github.com/user-attachments/assets/728fbec6-b716-4b5f-bc84-c69df849dc6a" />
+<img width="488" height="1013" alt="Screenshot from 2026-02-16 17-23-46" src="https://github.com/user-attachments/assets/728fbec6-b716-4b5f-bc84-c69df849dc6a" />
 
 
 ---
