@@ -29,7 +29,7 @@ export function MyProductsPageContent() {
           className="group inline-flex items-center justify-center gap-2 font-medium px-6 py-3 text-lg rounded-lg bg-foreground text-background hover:opacity-90 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <ArrowRightIcon
-            className={`${iconClass} transition-transform duration-300 group-hover:translate-x-1`}
+            className={`${iconClass} transition-transform duration-300 group-hover:translate-x-1 group-hover:rotate-180`}
             aria-hidden
           />
           Add your first product

@@ -17,7 +17,7 @@ export function ErrorMessage({
   return (
     <div
       role="alert"
-      className={`rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive ${className}`}
+      className={`break-all rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive ${className}`}
       {...props}
     >
       <p className="font-semibold inline-flex items-center gap-2">

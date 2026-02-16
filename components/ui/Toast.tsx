@@ -19,7 +19,7 @@ export function Toast() {
 
   return (
     <div
-      className="fixed bottom-6 left-1/2 z-[100] -translate-x-1/2 rounded-lg border border-border bg-foreground px-4 py-2.5 text-sm font-medium text-background shadow-lg animate-[fade-in_0.2s_ease-out]"
+      className="fixed bottom-6 left-1/2 z-[100] -translate-x-1/2 rounded-lg border border-border bg-foreground px-4 py-2.5 text-sm font-medium text-background shadow-lg animate-[fade-in_0.2s_ease-out] max-w-[min(90vw,480px)] break-words"
       role="status"
       aria-live="polite"
     >

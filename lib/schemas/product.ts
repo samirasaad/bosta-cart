@@ -18,10 +18,10 @@ export const createProductSchema = z.object({
     .number({
       invalid_type_error: "Price must be a number.",
     })
-    .min(1, "Price is required.")
+    // .min(1, "Price is required.")
     .max(1000, "Price must be less than 1,000.")
     .refine((v) => !Number.isNaN(v), "Price must be a number.")
-    .refine((v) => v > 0, "Price must be greater than 0."),
+    .refine((v) => v > 0, "Price must be a positive number."),
   category: z.string().min(1, "Category is required."),
   image: z
     .string()

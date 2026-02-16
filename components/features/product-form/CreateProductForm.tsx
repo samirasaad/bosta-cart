@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@/lib/zodResolver";
@@ -42,6 +43,7 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
         )
       : null;
   const isEditMode = editingProductId != null && localProduct != null;
+  const [editSuccess, setEditSuccess] = useState(false);
 
   const {
     register,
@@ -75,7 +77,8 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
         },
       });
       reset();
-      router.back();
+      setEditSuccess(true);
+      setTimeout(() => router.back(), 1500);
       return;
     }
 
@@ -106,6 +109,19 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
     );
   }
 
+  if (isEditMode && editSuccess) {
+    return (
+      <Card className="max-w-lg mx-auto">
+        <CardContent className="p-6 text-center">
+          <CheckMark />
+          <p className="text-lg font-medium text-foreground">
+            Product updated successfully. Going back...
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="max-w-xl mx-auto">
       <CardHeader>
@@ -128,6 +144,19 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
                 "message" in error
                   ? String((error as { message: string }).message)
                   : "Failed to create product."
+              }
+            />
+          )}
+          {isEditMode && updateMyProduct.isError && (
+            <ErrorMessage
+              message={
+                updateMyProduct.error &&
+                typeof updateMyProduct.error === "object" &&
+                "message" in updateMyProduct.error
+                  ? String(
+                      (updateMyProduct.error as { message: string }).message
+                    )
+                  : "Failed to update product."
               }
             />
           )}
@@ -181,7 +210,7 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
               ))}
             </div>
             {errors.category && (
-              <p className="mt-1 text-sm text-destructive" role="alert">
+              <p className="mt-1 text-sm text-destructive break-all" role="alert">
                 {errors.category.message}
               </p>
             )}
