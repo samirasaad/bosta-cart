@@ -14,7 +14,11 @@ This project demonstrates **production-level frontend architecture**, scalable c
 
 ## 📸 Screenshots
 
-![login](./demo/login-video.webm)
+<img width="1799" height="1070" alt="Screenshot from 2026-02-16 17-40-36" src="https://github.com/user-attachments/assets/f0050f35-9ad4-4e05-92a3-741908e5824c" />
+
+
+<img width="1799" height="1070" alt="Screenshot from 2026-02-16 17-40-31" src="https://github.com/user-attachments/assets/5b617741-0010-4dd3-b663-876e37e4d0d7" />
+
 
 <img width="1866" height="3702" alt="home" src="https://github.com/user-attachments/assets/5b63575a-5ec0-4791-add3-0a8a0265629d" />
 
@@ -49,7 +53,7 @@ This project demonstrates **production-level frontend architecture**, scalable c
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-08-42" src="https://github.com/user-attachments/assets/70fe054c-5827-453a-a6b2-2c9aff7b9b73" />
 
 
-<img width="488" height="1013" alt="Screenshot from 2026-02-16 17-23-46" src="https://github.com/user-attachments/assets/728fbec6-b716-4b5f-bc84-c69df849dc6a" />
+                          <img width="488" height="1013" alt="Screenshot from 2026-02-16 17-23-46" src="https://github.com/user-attachments/assets/728fbec6-b716-4b5f-bc84-c69df849dc6a" />
 
 
 ---
