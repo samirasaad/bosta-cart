@@ -18,25 +18,38 @@ This project demonstrates **production-level frontend architecture**, scalable c
 
 <img width="1866" height="3702" alt="home" src="https://github.com/user-attachments/assets/5b63575a-5ec0-4791-add3-0a8a0265629d" />
 
+
 <img width="1819" height="1087" alt="1p" src="https://github.com/user-attachments/assets/22e8f87c-d5a6-4180-8365-961da4ad34f7" />
+
 
 <img width="1819" height="1087" alt="2p" src="https://github.com/user-attachments/assets/6a41496f-7446-4e79-be4d-d0c9e204a9b5" />
 
+
 <img width="1819" height="1087" alt="3p" src="https://github.com/user-attachments/assets/572dfe77-5582-4711-8dd5-9f485d6c2b5c" />
+
 
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-07-10" src="https://github.com/user-attachments/assets/8d700f27-dea0-47b4-b81f-fb6ca7011291" />
 
+
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-07-27" src="https://github.com/user-attachments/assets/e693bfd9-53f4-4107-a032-fab02a9db8c3" />
+
 
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-07-40" src="https://github.com/user-attachments/assets/94137f04-2ab5-4365-a6aa-ed26d7341957" />
 
+
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-07-53" src="https://github.com/user-attachments/assets/1114f1f0-3a36-4aaa-8a46-eb88b965897f" />
+
 
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-08-16" src="https://github.com/user-attachments/assets/75489aef-f59f-427a-bd0a-b90d7136635d" />
 
+
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-08-26" src="https://github.com/user-attachments/assets/db3201c4-6c2e-43d3-a027-8d7c46b3b852" />
 
+
 <img width="1819" height="1087" alt="Screenshot from 2026-02-16 17-08-42" src="https://github.com/user-attachments/assets/70fe054c-5827-453a-a6b2-2c9aff7b9b73" />
+
+
+<img width="488" height="1013" alt="Screenshot from 2026-02-16 17-23-46" src="https://github.com/user-attachments/assets/728fbec6-b716-4b5f-bc84-c69df849dc6a" />
 
 
 ---
