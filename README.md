@@ -1,36 +1,263 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 Bosta Cart — React E-Commerce Shopping Cart System
 
-## Getting Started
+A fully functional **shopping cart web application** built using **Next.js , Typescript**, simulating real-world e-commerce cart workflows including **product listing, cart operations, dynamic price calculations, and state management**.
 
-First, run the development server:
+This project demonstrates **production-level frontend architecture**, scalable component structure, and clean business logic.
+
+---
+
+## 🔗 Live Demo
+
+👉 https://bosta-cart.vercel.app  
+
+---
+
+## 📸 Screenshots
+
+![Mobile](./screenshots/mobile.png)
+
+---
+
+## 🚀 Implemented Features
+
+### 🛍 Product Handling
+- Product listing display  
+- Dynamic product rendering  
+- Product cards with image, name,description, rating, and price  
+- Add/Remove to cart functionality  
+- Add/Remove to wishlist functionality  
+- View product details
+- similar to viewed products
+- Fetaured products
+- Deals
+- Add product
+- Edit product
+- Delete product
+- Wishlist view
+- My products view
+
+
+### 🔁 Auth
+- Login 
+- Signup
+
+
+### 🛒 Cart System
+- Add product to cart  
+- Remove product from cart  
+- Increase product quantity  
+- Decrease product quantity  
+- Prevent negative quantity  
+- Auto-remove item when quantity reaches zero  
+- Real-time cart state updates  
+
+
+### 💰 Pricing Logic
+- Dynamic subtotal calculation  
+- Per-item total calculation  
+- Global cart total calculation  
+- Auto-update totals when quantity changes  
+
+
+### 📦 Cart Summary
+- Order summary panel  
+- Total items count  
+- Total cart price  
+- Live calculation updates  
+
+
+### 🧪 Edge Case Handling
+- Prevent negative quantities
+- Prevent duplicated cart items
+- Auto-remove empty items
+- Dynamic empty lists UI
+
+🧠 Concepts Demonstrated
+- Component-driven architecture
+- State management
+- Business logic separation
+- Scalable folder structure
+- Real-world cart logic
+- Responsive UI
+
+
+### 📱 Responsive UI
+- Mobile-first design  
+- Tablet & desktop optimized  
+- Flexible grid layout  
+- Fully responsive cart layout  
+
+
+### ⚡ Performance Optimization
+- Optimized re-rendering  
+- Efficient state updates  
+- Component reusability  
+
+
+### 🧠 State Management
+- Centralized cart state  
+- Predictable updates  
+- Immutable state operations  
+- Clear data flow  
+
+
+### 🧩 UI / UX Enhancements
+- Disabled invalid actions  
+- Smooth interactions  
+- Clean and minimal design  
+- Empty cart handling  
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+- Next.js  
+- Typescript (ES6+)  
+- HTML5  
+- CSS3  
+- Tailwind CSS  
+- Vite  
+
+### Tools
+- Git & GitHub  
+- ESLint  
+- Prettier  
+
+---
+
+## 📂 Project Structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+bosta-cart/
+├─ app/
+│  ├─ layout.tsx           # Root layout: header, footer, providers, global toast
+│  ├─ page.tsx             # Landing page (may redirect to products)
+│  ├─ loading.tsx          # Global loading fallback
+│  ├─ error.tsx            # Global error boundary
+│  ├─ not-found.tsx        # Global 404
+│  ├─ auth/
+│  │  ├─ layout.tsx        # Auth layout (redirects if already authenticated)
+│  │  ├─ login/page.tsx    # Login page
+│  │  └─ signup/page.tsx   # Signup page
+│  ├─ products/
+│  │  ├─ page.tsx          # Products listing
+│  │  ├─ loading.tsx       # Products page skeleton
+│  │  ├─ error.tsx         # Products page error boundary
+│  │  ├─ new/page.tsx      # Create product page (form)
+│  │  ├─ [id]/page.tsx     # Product details (server + client fetch)
+│  │  └─ [id]/loading.tsx  # Product details skeleton
+│  ├─ cart/
+│  │  ├─ page.tsx          # Cart page
+│  │  └─ loading.tsx       # Cart skeleton
+│  ├─ wishlist/
+│  │  ├─ page.tsx          # Wishlist page
+│  │  └─ loading.tsx       # Wishlist skeleton
+│  └─ my-products/
+│     ├─ page.tsx          # "My products" page (local products only)
+│     └─ loading.tsx       # My products skeleton
+│
+├─ components/
+│  ├─ layout/
+│  │  ├─ Header.tsx              # Main navigation bar (auth/cart/wishlist/my-products)
+│  │  ├─ Footer.tsx              # Global footer
+│  │  ├─ ProtectedRoute.tsx      # Client-side auth guard for protected pages
+│  │  └─ RedirectIfAuthenticated.tsx
+│  ├─ features/
+│  │  ├─ auth/
+│  │  │  ├─ LoginForm.tsx
+│  │  │  └─ SignupForm.tsx
+│  │  ├─ cart/
+│  │  │  ├─ CartPageContent.tsx
+│  │  │  ├─ CartSummary.tsx
+│  │  │  └─ CartItem.tsx
+│  │  ├─ product-form/
+│  │  │  └─ CreateProductForm.tsx   # Create/edit product form (RHF + Zod)
+│  │  ├─ product-list/
+│  │  │  ├─ ProductList.tsx
+│  │  │  ├─ ProductCard.tsx
+│  │  │  ├─ SortAndFilter.tsx
+│  │  │  ├─ ProductListSkeleton.tsx
+│  │  │  ├─ FeaturedProductsCarousel.tsx
+│  │  │  └─ DealsSection.tsx
+│  │  ├─ product-detail/
+│  │  │  ├─ ProductDetail.tsx
+│  │  │  ├─ ProductDetailSkeleton.tsx
+│  │  │  └─ RelatedProducts.tsx
+│  │  ├─ wishlist/
+│  │  │  ├─ WishlistPageContent.tsx
+│  │  │  └─ WishlistSkeleton.tsx
+│  │  └─ my-products/
+│  │     ├─ MyProductsPageContent.tsx
+│  │     └─ MyProductsSkeleton.tsx
+│  ├─ ui/
+│  │  ├─ Button.tsx
+│  │  ├─ Card.tsx
+│  │  ├─ Input.tsx
+│  │  ├─ Textarea.tsx
+│  │  ├─ Select.tsx
+│  │  ├─ FilterChip.tsx
+│  │  ├─ SelectableChip.tsx
+│  │  ├─ Pagination.tsx
+│  │  ├─ ErrorMessage.tsx
+│  │  ├─ Toast.tsx
+│  │  ├─ Spinner.tsx
+│  │  ├─ StarRating.tsx
+│  │  ├─ GlobalFetchingIndicator.tsx
+│  │  └─ lotties/
+│  │     ├─ LottiePlayer.tsx
+│  │     ├─ ShoppingCartAnimation.tsx
+│  │     ├─ EmptyCartAnimation.tsx
+│  │     ├─ HeartAnimation.tsx
+│  │     └─ CheckMarkAnimation.tsx
+│
+├─ hooks/
+│  ├─ useProducts.ts           # Products list (React Query + local merge + pagination)
+│  ├─ useProduct.ts            # Single product (API + local fallback)
+│  ├─ useCategories.ts         # Product categories (API + local categories)
+│  ├─ useCreateProduct.ts      # React Query mutation for create
+│  ├─ useCreateProductFlow.ts  # High-level create flow (API + local stores + recent)
+│  └─ useMyProductActions.ts   # Update/delete for locally created products
+│
+├─ lib/
+│  ├─ api/
+│  │  ├─ client.ts         # Axios instance
+│  │  ├─ products.ts       # Fake Store products API wrappers
+│  │  ├─ auth.ts           # Auth-related API
+│  │  ├─ errors.ts         # Error helpers (getErrorMessage, isApiError)
+│  │  └─ getProductServer.ts # Server-side product fetch
+│  ├─ stores/
+│  │  ├─ authStore.ts
+│  │  ├─ cartStore.ts
+│  │  ├─ wishlistStore.ts
+│  │  ├─ toastStore.ts
+│  │  ├─ localProductsStore.ts  # Persisted store for locally added products
+│  │  └─ recentProductStore.ts  # In-memory store for the most recently added product
+│  ├─ schemas/
+│  │  ├─ auth.ts            # Zod schemas for login/signup
+│  │  └─ product.ts         # Zod schema for create/edit product
+│  ├─ types/
+│  │  └─ index.ts           # Shared domain types (Product, CartItem, WishlistItem, ApiError, etc.)
+│  ├─ zodResolver.ts        # Custom Zod resolver for react-hook-form
+│  ├─ env.ts                # Environment variables (e.g. app URL, site name)
+│  └─ constants.ts          # App constants (e.g. ITEMS_PER_PAGE)
+│
+├─ providers/
+│  └─ QueryProvider.tsx     # React Query provider for the app
+│
+├─ public/
+│  └─ icon.svg              # App icon (also used as image fallback)
+│
+├─ README.md
+├─ package.json
+├─ next.config.ts
+└─ tsconfig.json
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+👩‍💻 Author
+Samira Saad
+Frontend Developer | Next.js & React Developer
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+GitHub: https://github.com/samirasaad
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Portfolio: https://personal-portfolio-samira-saad.vercel.app
