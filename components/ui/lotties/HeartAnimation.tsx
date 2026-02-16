@@ -1,4 +1,4 @@
-import { LottiePlayer } from "@/components/ui/LottiePlayer";
+import { LottiePlayer } from "@/components/ui/lotties/LottiePlayer";
 import HeartAnimation from "@/public/lotties/HeartAnimation.json";
 
 export function Heart() {

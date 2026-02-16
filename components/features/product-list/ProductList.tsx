@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useProducts } from "@/hooks/useProducts";
-import { ProductCard } from "./ProductCard";
+import { ProductCard, type ProductCardProps } from "./ProductCard";
 import { ProductListSkeleton } from "./ProductListSkeleton";
 import { SortAndFilter } from "./SortAndFilter";
 import { FeaturedProductsCarousel } from "./FeaturedProductsCarousel";
@@ -12,6 +12,7 @@ import { DealsSection } from "./DealsSection";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
+import { useRecentProductStore } from "@/lib/stores/recentProductStore";
 
 export function ProductList() {
   const searchParams = useSearchParams();
@@ -20,6 +21,7 @@ export function ProductList() {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const search = searchParams.get("q") || null;
   const filtersRef = useRef<HTMLDivElement>(null);
+  const recentProduct = useRecentProductStore((s) => s.recentProduct);
 
   useEffect(() => {
     const el = filtersRef.current;
@@ -30,7 +32,7 @@ export function ProductList() {
       });
     });
     return () => cancelAnimationFrame(id);
-  }, [page]);
+  }, [page, search]);
 
   const {
     data: products,
@@ -100,6 +102,26 @@ export function ProductList() {
     );
   }
 
+  const displayProducts =
+    recentProduct && products && currentPage === 1
+      ? (() => {
+          const existsIndex = products.findIndex(
+            (p) => p.id === recentProduct.id
+          );
+          // If the recent product is not in the current page results
+          // (e.g. filtered out by search/category), don't inject it.
+          if (existsIndex === -1) {
+            return products;
+          }
+          if (existsIndex === 0) {
+            return products;
+          }
+          const copy = [...products];
+          const [item] = copy.splice(existsIndex, 1);
+          return [item, ...copy];
+        })()
+      : products;
+
   return (
     <>
       <FeaturedProductsCarousel />
@@ -108,9 +130,13 @@ export function ProductList() {
           <SortAndFilter />
         </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {displayProducts!.map((product) => {
+          const cardProps: ProductCardProps = {
+            product,
+            isNew: recentProduct != null && product.id === recentProduct.id,
+          };
+          return <ProductCard key={product.id} {...cardProps} />;
+        })}
       </div>
       {totalPages > 1 && (
         <div className="mt-8">

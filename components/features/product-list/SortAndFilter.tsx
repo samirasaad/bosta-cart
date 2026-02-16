@@ -94,7 +94,7 @@ export function SortAndFilter() {
             />
             <input
               id="product-search"
-              type="search"
+              type="text"
               name="q"
               defaultValue={searchQuery}
               key={searchQuery}

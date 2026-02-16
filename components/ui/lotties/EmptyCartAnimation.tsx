@@ -1,5 +1,5 @@
-import { LottiePlayer } from "@/components/ui/LottiePlayer";
-import EmptyCartAnimation from "@/public/lotties/empty-cart.json";
+import { LottiePlayer } from "@/components/ui/lotties/LottiePlayer";
+import EmptyCartAnimation from "@/public/lotties/EmptyCartAnimation.json";
 
 export function EmptyCart() {
   return (

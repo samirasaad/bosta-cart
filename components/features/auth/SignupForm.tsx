@@ -1,89 +1,85 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@/lib/zodResolver";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
+import { signupSchema, type SignupFormValues } from "@/lib/schemas/auth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 
 const iconClass = "w-5 h-5 shrink-0";
-
 const SIGNUP_STORAGE_KEY = "signup_credentials";
 
 export function SignupForm() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    if (!username.trim() || !password || !confirmPassword) {
-      setError("All fields are required.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-    if (password.length < 4) {
-      setError("Password must be at least 4 characters.");
-      return;
-    }
-    setIsLoading(true);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit = async (data: SignupFormValues) => {
     try {
       if (typeof window !== "undefined") {
         localStorage.setItem(
           SIGNUP_STORAGE_KEY,
-          JSON.stringify({ username: username.trim(), password })
+          JSON.stringify({ username: data.username, password: data.password })
         );
       }
       router.push("/auth/login?from=signup");
     } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
+      setError("root", { message: "Something went wrong. Please try again." });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-      {error && (
-        <ErrorMessage message={error} title="Sign up failed" />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+      {errors.root && (
+        <ErrorMessage
+          message={errors.root.message ?? ""}
+          title="Sign up failed"
+        />
       )}
       <Input
         label="Username"
         type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
         placeholder="Username"
         autoComplete="username"
         required
-        disabled={isLoading}
+        disabled={isSubmitting}
+        {...register("username")}
+        error={errors.username?.message}
       />
       <Input
         label="Password"
         type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
         autoComplete="new-password"
         required
-        disabled={isLoading}
+        disabled={isSubmitting}
+        {...register("password")}
+        error={errors.password?.message}
       />
       <Input
         label="Confirm password"
         type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
         placeholder="Confirm password"
         autoComplete="new-password"
         required
-        disabled={isLoading}
+        disabled={isSubmitting}
+        {...register("confirmPassword")}
+        error={errors.confirmPassword?.message}
       />
       <p className="text-xs text-muted-foreground">
         The Fake Store API does not support real signup. Your credentials are
@@ -95,8 +91,8 @@ export function SignupForm() {
         variant="primary"
         size="lg"
         fullWidth
-        isLoading={isLoading}
-        disabled={isLoading}
+        isLoading={isSubmitting}
+        disabled={isSubmitting}
         className="inline-flex items-center justify-center gap-2"
       >
         <UserPlusIcon className={iconClass} aria-hidden />

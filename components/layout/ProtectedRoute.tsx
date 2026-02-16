@@ -3,14 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/authStore";
+import { Spinner } from "@/components/ui/Spinner";
+import { WishlistSkeleton } from "@/components/features/wishlist/WishlistSkeleton";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
-const placeholder = (
+const loadingPlaceholder = (
   <div className="flex justify-center items-center min-h-[40vh]">
-    <p className="text-muted-foreground">Redirecting to login...</p>
+    <Spinner size="lg" />
   </div>
 );
 
@@ -33,11 +35,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }, [mounted, token, pathname, router]);
 
   if (!mounted) {
-    return placeholder;
+    if (pathname?.startsWith("/wishlist")) {
+      return <WishlistSkeleton />;
+    }
+    return loadingPlaceholder;
   }
 
   if (!token) {
-    return placeholder;
+    return loadingPlaceholder;
   }
 
   return <>{children}</>;

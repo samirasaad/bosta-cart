@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProducts, getProductsByCategory } from "@/lib/api/products";
 import { ITEMS_PER_PAGE } from "@/lib/constants";
 import type { Product } from "@/lib/types";
+import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
 
 export type SortOrder = "asc" | "desc";
 
@@ -29,6 +30,8 @@ function filterBySearch(products: Product[], search: string): Product[] {
 }
 
 export function useProducts({ category, sortOrder, page, search }: UseProductsParams) {
+  const localProducts = useLocalProductsStore((s) => s.items);
+
   const query = useQuery({
     queryKey: ["products", category ?? "all", sortOrder],
     queryFn: () =>
@@ -37,8 +40,21 @@ export function useProducts({ category, sortOrder, page, search }: UseProductsPa
         : getProducts({ sort: sortOrder }),
   });
 
+  const mergedBase: Product[] | undefined = query.data
+    ? (() => {
+        const base = query.data;
+        const localFiltered = category
+          ? localProducts.filter((p) => p.category === category)
+          : localProducts;
+        const byId = new Map<number, Product>();
+        for (const p of base) byId.set(p.id, p);
+        for (const p of localFiltered) byId.set(p.id, p);
+        return Array.from(byId.values());
+      })()
+    : undefined;
+
   const sorted =
-    query.data != null ? sortByPrice(query.data, sortOrder) : undefined;
+    mergedBase != null ? sortByPrice(mergedBase, sortOrder) : undefined;
   const searchTerm = search != null ? String(search).trim() : "";
   const filtered =
     sorted != null && searchTerm !== ""

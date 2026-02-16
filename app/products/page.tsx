@@ -10,9 +10,7 @@ export default function ProductsPage() {
         <Squares2X2Icon className="w-8 h-8 shrink-0" aria-hidden />
         Products
       </h1>
-      <Suspense fallback={<ProductListSkeleton />}>
         <ProductList />
-      </Suspense>
     </main>
   );
 }

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { ArrowLeftIcon, ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { useProduct } from "@/hooks/useProduct";
+import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
+import { isApiError } from "@/lib/api/errors";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
@@ -25,7 +27,20 @@ interface ProductDetailProps {
 
 export function ProductDetail({ productId, initialProduct }: ProductDetailProps) {
   const router = useRouter();
-  const { data: product, isLoading, isError, error, refetch } = useProduct(productId, initialProduct);
+  const localProducts = useLocalProductsStore((s) => s.items);
+  const numericId = Number(productId);
+  const localProduct =
+    !Number.isNaN(numericId)
+      ? localProducts.find((p) => p.id === numericId)
+      : undefined;
+
+  const {
+    data: product,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useProduct(productId, initialProduct ?? localProduct ?? undefined);
   const token = useAuthStore((s) => s.token);
   const addItem = useCartStore((s) => s.addItem);
   const toggleWishlist = useWishlistStore((s) => s.toggleItem);
@@ -39,11 +54,15 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
     }
   };
 
-  if (isLoading) {
+  const effectiveProduct = product ?? localProduct ?? initialProduct ?? null;
+
+  if (isLoading && !effectiveProduct) {
     return <ProductDetailSkeleton />;
   }
 
-  if (isError || !product) {
+  if (!effectiveProduct) {
+    const apiError = isApiError(error || null) ? (error as any) : null;
+    const canRetry = isError && apiError ? apiError.status !== 404 : isError && !apiError;
     return (
       <ErrorMessage
         message={
@@ -51,7 +70,7 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
             ? String((error as { message: string }).message)
             : "Product not found."
         }
-        onRetry={() => refetch()}
+        onRetry={canRetry ? () => refetch() : undefined}
       />
     );
   }
@@ -71,8 +90,8 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
           <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
           <Image
-            src={product.image}
-            alt={product.title}
+            src={effectiveProduct.image}
+            alt={effectiveProduct.title}
             fill
             className="object-contain p-4"
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -83,31 +102,33 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
           <div className="flex flex-col">
             <CardHeader className="p-0">
               <p className="text-sm text-muted-foreground capitalize mb-1">
-                {product.category}
+                {effectiveProduct.category}
               </p>
-              <h1 className="text-2xl md:text-3xl font-bold min-w-0">{product.title}</h1>
-              {product.rating != null && (
+              <h1 className="text-2xl md:text-3xl font-bold min-w-0">
+                {effectiveProduct.title}
+              </h1>
+              {effectiveProduct.rating != null && (
                 <StarRating
-                  rate={product.rating.rate}
-                  count={product.rating.count}
+                  rate={effectiveProduct.rating.rate}
+                  count={effectiveProduct.rating.count}
                   className="mt-2"
                 />
               )}
             </CardHeader>
             <CardContent className="p-0 flex-1 flex flex-col">
               <p className="text-lg font-semibold text-foreground mt-2">
-                ${product.price.toFixed(2)}
+                ${effectiveProduct.price.toFixed(2)}
               </p>
               <p className="text-muted-foreground mt-4 flex-1">
-                {product.description}
+                {effectiveProduct.description}
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 mt-6">
                 <Button
                   variant="primary"
                   size="lg"
-                  onClick={() => addItem(product)}
+                  onClick={() => addItem(effectiveProduct)}
                   className="group inline-flex items-center justify-center gap-2"
-                  aria-label={`Add ${product.title} to cart`}
+                  aria-label={`Add ${effectiveProduct.title} to cart`}
                 >
                   <ShoppingCartIcon
                     className={`${iconClass} transition-transform duration-200 ease-out group-hover:scale-125 group-active:scale-95`}
@@ -119,9 +140,11 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={() => toggleWishlist(product)}
+                    onClick={() => toggleWishlist(effectiveProduct)}
                     className="group inline-flex items-center justify-center gap-2"
-                    aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+                    aria-label={
+                      isInWishlist ? "Remove from wishlist" : "Add to wishlist"
+                    }
                   >
                     {isInWishlist ? (
                       <HeartIconSolid className={`${iconClass} text-red-500 transition-transform duration-200 ease-out group-hover:scale-125 group-active:scale-95`} aria-hidden />
@@ -136,7 +159,7 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
           </div>
         </div>
       </Card>
-      <RelatedProducts currentProduct={product} />
+      <RelatedProducts currentProduct={effectiveProduct} />
     </div>
   );
 }

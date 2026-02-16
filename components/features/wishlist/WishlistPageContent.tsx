@@ -9,7 +9,7 @@ import { useCartStore } from "@/lib/stores/cartStore";
 import { Button } from "@/components/ui/Button";
 import type { WishlistItem as WishlistItemType } from "@/lib/types";
 import type { Product } from "@/lib/types";
-import { Heart } from "@/components/ui/Heart";
+import { Heart } from "@/components/ui/lotties/HeartAnimation";
 
 const iconClass = "w-5 h-5 shrink-0";
 

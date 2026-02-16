@@ -12,7 +12,6 @@
  * API for that metadata, we do not offer share to avoid misleading or broken previews.
  */
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { ProductDetail } from "@/components/features/product-detail/ProductDetail";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/Spinner";
@@ -65,22 +64,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   try {
     initialProduct = await getProductServer(id);
   } catch (err) {
-    const status = err && typeof err === "object" && "status" in err ? (err as { status?: number }).status : undefined;
-    if (status === 404) notFound();
-    // Network/5xx: render ProductDetail without initialProduct so client fetches
+    // For newly created local products, the API may not know about the ID.
+    // Swallow errors here and let the client-side hook resolve from local store.
   }
 
   return (
     <main className="container mx-auto px-4 py-6 md:py-8">
-      <Suspense
-        fallback={
-          <div className="flex justify-center py-12">
-            <Spinner size="lg" />
-          </div>
-        }
-      >
         <ProductDetail productId={id} initialProduct={initialProduct} />
-      </Suspense>
     </main>
   );
 }

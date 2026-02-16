@@ -21,18 +21,28 @@ import type { Product } from "@/lib/types";
 const iconClass = "w-4 h-4 shrink-0";
 const iconAnim = "transition-transform duration-200 ease-out group-hover:scale-125 group-active:scale-95";
 
-interface ProductCardProps {
+export interface ProductCardProps {
   product: Product;
+  isNew?: boolean;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, isNew = false }: ProductCardProps) {
   const token = useAuthStore((s) => s.token);
   const addItem = useCartStore((s) => s.addItem);
   const toggleWishlist = useWishlistStore((s) => s.toggleItem);
   const isInWishlist = useWishlistStore((s) => s.isInWishlist(product.id));
 
   return (
-    <Card className=" flex flex-col h-full">
+    <Card
+      className={`relative flex flex-col h-full ${
+        isNew ? "ring-2 ring-emerald-500 ring-offset-2 ring-offset-background" : ""
+      }`}
+    >
+      {isNew && (
+        <span className="absolute -top-2 left-2 z-1 rounded-full bg-emerald-500 text-xs font-semibold text-background px-3 py-1 shadow-sm">
+          New
+        </span>
+      )}
       <Link
         href={`/products/${product.id}`}
         className="block aspect-square relative bg-muted"

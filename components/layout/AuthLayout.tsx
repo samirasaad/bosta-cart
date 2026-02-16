@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { env } from "@/lib/env";
-import { LottiePlayer } from "../ui/LottiePlayer";
+import { LottiePlayer } from "@/components/ui/lotties/LottiePlayer";
 import ShoppingCartAnimation from "@/public/lotties/shopping-cart.json";
 
 interface AuthLayoutProps {

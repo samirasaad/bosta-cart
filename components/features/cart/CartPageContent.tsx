@@ -5,7 +5,7 @@ import { ShoppingCartIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { CartItem } from "./CartItem";
 import { CartSummary } from "./CartSummary";
-import { EmptyCart } from "@/components/ui/EmptyCart";
+import { EmptyCart } from "@/components/ui/lotties/EmptyCartAnimation";
 
 const iconClass = "w-6 h-6 shrink-0";
 

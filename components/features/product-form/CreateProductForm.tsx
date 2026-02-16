@@ -1,87 +1,87 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { PlusCircleIcon, CheckCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@/lib/zodResolver";
+import {
+  PlusCircleIcon,
+  CheckCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { useCategories } from "@/hooks/useCategories";
 import { useCreateProduct } from "@/hooks/useCreateProduct";
+import { createProductSchema } from "@/lib/schemas/product";
+import type { CreateProductFormValues } from "@/lib/schemas/product";
+import { useRecentProductStore } from "@/lib/stores/recentProductStore";
+import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { SelectableChip } from "@/components/ui/SelectableChip";
+import { CheckMark } from "@/components/ui/lotties/CheckMarkAnimation";
 
 const iconClass = "w-5 h-5 shrink-0";
-
-interface FormErrors {
-  title?: string;
-  description?: string;
-  price?: string;
-  category?: string;
-  image?: string;
-}
 
 export function CreateProductForm() {
   const router = useRouter();
   const { data: categories = [], isLoading: categoriesLoading } = useCategories();
   const createProduct = useCreateProduct();
+  const setRecentProduct = useRecentProductStore((s) => s.setRecentProduct);
+  const addLocalProduct = useLocalProductsStore((s) => s.addProduct);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [image, setImage] = useState("");
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [success, setSuccess] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateProductFormValues>({
+    resolver: zodResolver(createProductSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      price: 1,
+      category: "",
+      image: "",
+    },
+  });
 
-  const validate = useCallback((): boolean => {
-    const next: FormErrors = {};
-    if (!title.trim()) next.title = "Title is required.";
-    if (!description.trim()) next.description = "Description is required.";
-    const priceNum = parseFloat(price);
-    if (price === "" || isNaN(priceNum))
-      next.price = "Price must be a number.";
-    else if (priceNum <= 0) next.price = "Price must be greater than 0.";
-    if (!category) next.category = "Category is required.";
-    if (!image.trim()) next.image = "Image URL is required.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  }, [title, description, price, category, image]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
+  const onSubmit = async (data: CreateProductFormValues) => {
     try {
-      await createProduct.mutateAsync({
-        title: title.trim(),
-        description: description.trim(),
-        price: parseFloat(price),
-        category,
-        image: image.trim(),
+      const upperTitle = data.title.toUpperCase();
+      const upperDescription = data.description.toUpperCase();
+
+      const created = await createProduct.mutateAsync({
+        title: upperTitle,
+        description: upperDescription,
+        price: Number(data.price),
+        category: data.category,
+        image: data.image,
       });
-      setSuccess(true);
-      setTitle("");
-      setDescription("");
-      setPrice("");
-      setCategory("");
-      setImage("");
-      setErrors({});
+      setRecentProduct(created);
+      addLocalProduct(created);
+      reset();
       setTimeout(() => router.push("/products"), 1500);
     } catch {
       // Error is shown via createProduct.isError
     }
   };
 
-  const categoryOptions = categories.map((c) => ({
+  const categoryOptions = (categories as string[]).map((c) => ({
     value: c,
     label: c.charAt(0).toUpperCase() + c.slice(1),
   }));
 
-  if (success) {
+  const selectedCategory = watch("category");
+
+  if (createProduct.isSuccess) {
     return (
       <Card className="max-w-lg mx-auto">
         <CardContent className="p-6 text-center">
-          <CheckCircleIcon className="w-12 h-12 mx-auto text-foreground mb-3" aria-hidden />
+        <CheckMark />
           <p className="text-lg font-medium text-foreground">
             Product created successfully. Redirecting to products...
           </p>
@@ -99,7 +99,11 @@ export function CreateProductForm() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit as SubmitHandler<CreateProductFormValues>)}
+          className="space-y-4"
+          noValidate
+        >
           {createProduct.isError && (
             <ErrorMessage
               message={
@@ -113,67 +117,80 @@ export function CreateProductForm() {
           )}
           <Input
             label="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
             placeholder="Product title"
-            error={errors.title}
             required
+            {...register("title")}
+            error={errors.title?.message}
           />
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Product description"
-              rows={4}
-              className={`w-full px-3 py-2 rounded-md border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 ${
-                errors.description ? "border-destructive" : "border-input"
-              }`}
-            />
-            {errors.description && (
-              <p className="mt-1 text-sm text-destructive" role="alert">
-                {errors.description}
-              </p>
-            )}
-          </div>
+          <Textarea
+            label="Description"
+            placeholder="Product description"
+            rows={4}
+            {...register("description")}
+            error={errors.description?.message}
+          />
           <Input
             label="Price"
             type="number"
             step="0.01"
-            min="0"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            min="1"
             placeholder="0.00"
-            error={errors.price}
             required
+            {...register("price")}
+            error={errors.price?.message}
           />
-          <Select
-            label="Category"
-            options={categoryOptions}
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            placeholder="Select category"
-            disabled={categoriesLoading}
-            error={errors.category}
-          />
+          <div>
+            <p className="block text-sm font-medium text-foreground mb-1">
+              Category
+            </p>
+            <div
+              className="flex flex-wrap gap-2"
+              role="radiogroup"
+              aria-label="Product category"
+            >
+              {categoryOptions.map((opt) => (
+                <SelectableChip
+                  key={opt.value}
+                  isActive={selectedCategory === opt.value}
+                  onClick={() =>
+                    setValue("category", opt.value, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }
+                  aria-label={`Category: ${opt.label}`}
+                >
+                  {opt.label}
+                </SelectableChip>
+              ))}
+            </div>
+            {errors.category && (
+              <p className="mt-1 text-sm text-destructive" role="alert">
+                {errors.category.message}
+              </p>
+            )}
+          </div>
           <Input
             label="Image URL"
             type="url"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
             placeholder="https://..."
-            error={errors.image}
             required
+            {...register("image")}
+            error={errors.image?.message}
           />
+          <div className="text-xs text-muted-foreground">
+            Hint: you can use this demo image URL for testing:{" "}
+            <p className="font-mono break-all">
+              https://fakestoreapi.com/img/71z3kpMAYsL._AC_UY879_t.png
+            </p>
+          </div>
           <div className="flex gap-3 pt-2">
             <Button
               type="submit"
               variant="primary"
               size="lg"
-              isLoading={createProduct.isPending}
-              disabled={createProduct.isPending || categoriesLoading}
+              isLoading={isSubmitting || createProduct.isPending}
+              disabled={isSubmitting || createProduct.isPending || categoriesLoading}
               fullWidth
               className="inline-flex items-center justify-center gap-2"
             >
@@ -184,7 +201,7 @@ export function CreateProductForm() {
               type="button"
               variant="outline"
               size="lg"
-              onClick={() => router.push("/products")}
+              onClick={() => router.back()}
               disabled={createProduct.isPending}
               className="inline-flex items-center justify-center gap-2"
             >
