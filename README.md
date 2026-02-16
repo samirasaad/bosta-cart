@@ -135,12 +135,14 @@ This project demonstrates **production-level frontend architecture**, scalable c
 ## 🛠 Tech Stack
 
 ### Frontend
-- Next.js  
-- Typescript (ES6+)  
-- HTML5  
-- CSS3  
-- Tailwind CSS  
-- Vite  
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **UI**: React, Tailwind CSS 4
+- **State Management**: Zustand
+- **Data Fetching**: @tanstack/react-query
+- **Forms & Validation**: react-hook-form + Zod
+- **HTTP Client**: Axios
+- **Animations**: Lottie
 
 ### Tools
 - Git & GitHub  
