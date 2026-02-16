@@ -1,5 +1,8 @@
 export interface Product {
+  /** Synthetic id used by the app (may differ from API id). */
   id: number;
+  /** Original id returned by the Fake Store API, when applicable. */
+  apiId?: number;
   title: string;
   description: string;
   price: number;

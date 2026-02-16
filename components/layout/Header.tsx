@@ -20,6 +20,7 @@ import {
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
+import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
 import { env } from "@/lib/env";
 
 const iconClass = "w-5 h-5 shrink-0 ";
@@ -37,6 +38,7 @@ export function Header() {
   const logout = useAuthStore((s) => s.logout);
   const itemCount = useCartStore((s) => s.getItemCount());
   const wishlistCount = useWishlistStore((s) => s.getCount());
+  const myProductsCount = useLocalProductsStore((s) => s.items.length);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -200,6 +202,20 @@ export function Header() {
                         </span>
                       )}
                     </Link>
+                    <Link
+                      href="/my-products"
+                      onClick={closeUserMenu}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-left text-foreground hover:bg-muted cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
+                      role="menuitem"
+                    >
+                      <Squares2X2Icon className={iconClass} aria-hidden />
+                      <span>My products</span>
+                      {myProductsCount > 0 && (
+                        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-foreground text-background text-xs px-1">
+                          {myProductsCount}
+                        </span>
+                      )}
+                    </Link>
                     <button
                       type="button"
                       onClick={handleLogout}
@@ -311,6 +327,22 @@ export function Header() {
                     aria-label={`${wishlistCount} items in wishlist`}
                   >
                     {wishlistCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/my-products"
+                onClick={closeMobile}
+                className={`flex items-center gap-2 py-3 px-3 rounded-lg ${navLinkClass(pathname === "/my-products")}`}
+              >
+                <Squares2X2Icon className={iconClass} aria-hidden />
+                My products
+                {myProductsCount > 0 && (
+                  <span
+                    className="ml-auto flex h-6 min-w-6 items-center justify-center rounded-full bg-foreground text-background text-xs px-1.5"
+                    aria-label={`${myProductsCount} items in my products`}
+                  >
+                    {myProductsCount}
                   </span>
                 )}
               </Link>

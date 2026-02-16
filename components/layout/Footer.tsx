@@ -38,7 +38,7 @@ export function Footer() {
           </nav>
         </div>
         <p className=" text-center sm:text-left text-xs text-muted-foreground">
-          E-commerce demo with Fake Store API. © {new Date().getFullYear()} {env.siteName}.
+          E-commerce. © {new Date().getFullYear()} {env.siteName}.
         </p>
       </div>
     </footer>

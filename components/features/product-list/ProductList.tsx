@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductCard, type ProductCardProps } from "./ProductCard";
 import { ProductListSkeleton } from "./ProductListSkeleton";
@@ -13,8 +14,11 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { useRecentProductStore } from "@/lib/stores/recentProductStore";
+import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
+import { useMyProductActions } from "@/hooks/useMyProductActions";
 
 export function ProductList() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get("category") || null;
   const sortOrder = (searchParams.get("sort") as "asc" | "desc") ?? "asc";
@@ -22,6 +26,8 @@ export function ProductList() {
   const search = searchParams.get("q") || null;
   const filtersRef = useRef<HTMLDivElement>(null);
   const recentProduct = useRecentProductStore((s) => s.recentProduct);
+  const localProducts = useLocalProductsStore((s) => s.items);
+  const { deleteMyProduct } = useMyProductActions();
 
   useEffect(() => {
     const el = filtersRef.current;
@@ -126,14 +132,58 @@ export function ProductList() {
     <>
       <FeaturedProductsCarousel />
       <DealsSection />
-<div ref={filtersRef} className="scroll-mt-24 mb-6">
-          <SortAndFilter />
-        </div>
+      <div ref={filtersRef} className="scroll-mt-24 mb-6">
+        <SortAndFilter />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {displayProducts!.map((product) => {
+          const isOwned = localProducts.some((p) => p.id === product.id);
+
+          let overlayActions: ProductCardProps["overlayActions"];
+          if (isOwned) {
+            const handleEditClick = (
+              e: React.MouseEvent<HTMLButtonElement>
+            ) => {
+              e.preventDefault();
+              e.stopPropagation();
+              router.push(`/products/edit/${product.id}`);
+            };
+
+            const handleDeleteClick = async (
+              e: React.MouseEvent<HTMLButtonElement>
+            ) => {
+              e.preventDefault();
+              e.stopPropagation();
+              await deleteMyProduct.mutateAsync(product);
+            };
+
+            overlayActions = (
+              <>
+                <button
+                  type="button"
+                  onClick={handleEditClick}
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-background/90 border border-border text-muted-foreground hover:text-foreground hover:bg-background hover:border-foreground/40 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+                  aria-label={`Edit ${product.title}`}
+                >
+                  <PencilSquareIcon className="w-4 h-4" aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteClick}
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-background/90 border border-red-500 text-red-600 hover:bg-red-50 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                  aria-label={`Delete ${product.title}`}
+                  title={`Delete "${product.title}"`}
+                >
+                  <TrashIcon className="w-4 h-4" aria-hidden />
+                </button>
+              </>
+            );
+          }
+
           const cardProps: ProductCardProps = {
             product,
             isNew: recentProduct != null && product.id === recentProduct.id,
+            overlayActions,
           };
           return <ProductCard key={product.id} {...cardProps} />;
         })}

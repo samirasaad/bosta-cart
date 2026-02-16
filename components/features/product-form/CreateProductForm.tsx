@@ -9,11 +9,12 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useCategories } from "@/hooks/useCategories";
-import { useCreateProduct } from "@/hooks/useCreateProduct";
 import { createProductSchema } from "@/lib/schemas/product";
 import type { CreateProductFormValues } from "@/lib/schemas/product";
-import { useRecentProductStore } from "@/lib/stores/recentProductStore";
+import { useCreateProductFlow } from "@/hooks/useCreateProductFlow";
 import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
+import { useMyProductActions } from "@/hooks/useMyProductActions";
+import type { Product } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -24,12 +25,23 @@ import { CheckMark } from "@/components/ui/lotties/CheckMarkAnimation";
 
 const iconClass = "w-5 h-5 shrink-0";
 
-export function CreateProductForm() {
+interface CreateProductFormProps {
+  /** When provided, the form works in 'edit' mode for this local product id. */
+  editingProductId?: number;
+}
+
+export function CreateProductForm({ editingProductId }: CreateProductFormProps) {
   const router = useRouter();
   const { data: categories = [], isLoading: categoriesLoading } = useCategories();
-  const createProduct = useCreateProduct();
-  const setRecentProduct = useRecentProductStore((s) => s.setRecentProduct);
-  const addLocalProduct = useLocalProductsStore((s) => s.addProduct);
+  const { createFromForm, isPending: createPending, isSuccess, error } = useCreateProductFlow();
+  const { updateMyProduct } = useMyProductActions();
+  const localProduct: Product | null =
+    editingProductId != null
+      ? useLocalProductsStore(
+          (s) => s.items.find((p) => p.id === editingProductId) ?? null
+        )
+      : null;
+  const isEditMode = editingProductId != null && localProduct != null;
 
   const {
     register,
@@ -41,32 +53,36 @@ export function CreateProductForm() {
   } = useForm<CreateProductFormValues>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      price: 1,
-      category: "",
-      image: "",
+      title: localProduct?.title ?? "",
+      description: localProduct?.description ?? "",
+      price: localProduct?.price ?? 1,
+      category: localProduct?.category ?? "",
+      image: localProduct?.image ?? "",
     },
   });
-
   const onSubmit = async (data: CreateProductFormValues) => {
-    try {
+    if (isEditMode && localProduct) {
       const upperTitle = data.title.toUpperCase();
       const upperDescription = data.description.toUpperCase();
-
-      const created = await createProduct.mutateAsync({
-        title: upperTitle,
-        description: upperDescription,
-        price: Number(data.price),
-        category: data.category,
-        image: data.image,
+      await updateMyProduct.mutateAsync({
+        product: localProduct,
+        updates: {
+          title: upperTitle,
+          description: upperDescription,
+          price: Number(data.price),
+          category: data.category,
+          image: data.image,
+        },
       });
-      setRecentProduct(created);
-      addLocalProduct(created);
+      reset();
+      router.push("/my-products");
+      return;
+    }
+
+    const result = await createFromForm(data);
+    if (result) {
       reset();
       setTimeout(() => router.push("/products"), 1500);
-    } catch {
-      // Error is shown via createProduct.isError
     }
   };
 
@@ -77,7 +93,7 @@ export function CreateProductForm() {
 
   const selectedCategory = watch("category");
 
-  if (createProduct.isSuccess) {
+  if (!isEditMode && isSuccess) {
     return (
       <Card className="max-w-lg mx-auto">
         <CardContent className="p-6 text-center">
@@ -95,7 +111,7 @@ export function CreateProductForm() {
       <CardHeader>
         <CardTitle className="inline-flex items-center gap-2">
           <PlusCircleIcon className={iconClass} aria-hidden />
-          Create Product
+          {isEditMode ? "Edit Product" : "Create Product"}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -104,13 +120,13 @@ export function CreateProductForm() {
           className="space-y-4"
           noValidate
         >
-          {createProduct.isError && (
+          {!isEditMode && Boolean(error) && (
             <ErrorMessage
               message={
-                createProduct.error &&
-                typeof createProduct.error === "object" &&
-                "message" in createProduct.error
-                  ? String((createProduct.error as { message: string }).message)
+                error &&
+                typeof error === "object" &&
+                "message" in error
+                  ? String((error as { message: string }).message)
                   : "Failed to create product."
               }
             />
@@ -189,20 +205,20 @@ export function CreateProductForm() {
               type="submit"
               variant="primary"
               size="lg"
-              isLoading={isSubmitting || createProduct.isPending}
-              disabled={isSubmitting || createProduct.isPending || categoriesLoading}
+              isLoading={isSubmitting || createPending}
+              disabled={isSubmitting || createPending || categoriesLoading}
               fullWidth
               className="inline-flex items-center justify-center gap-2"
             >
               <PlusCircleIcon className={iconClass} aria-hidden />
-              Create Product
+              {isEditMode ? "Save changes" : "Create Product"}
             </Button>
             <Button
               type="button"
               variant="outline"
               size="lg"
               onClick={() => router.back()}
-              disabled={createProduct.isPending}
+              disabled={createPending}
               className="inline-flex items-center justify-center gap-2"
             >
               <XMarkIcon className={iconClass} aria-hidden />

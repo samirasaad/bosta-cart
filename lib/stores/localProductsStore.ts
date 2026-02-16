@@ -7,6 +7,8 @@ const LOCAL_PRODUCTS_STORAGE_KEY = "bosta-local-products";
 interface LocalProductsState {
   items: Product[];
   addProduct: (product: Product) => void;
+  updateProduct: (id: number, updates: Partial<Product>) => void;
+  removeProduct: (id: number) => void;
   clear: () => void;
 }
 
@@ -26,6 +28,16 @@ export const useLocalProductsStore = create<LocalProductsState>()(
           }
           return { items: [product, ...state.items] };
         }),
+      updateProduct: (id, updates) =>
+        set((state) => ({
+          items: state.items.map((p) =>
+            p.id === id ? { ...p, ...updates } : p
+          ),
+        })),
+      removeProduct: (id) =>
+        set((state) => ({
+          items: state.items.filter((p) => p.id !== id),
+        })),
       clear: () => set({ items: [] }),
     }),
     {

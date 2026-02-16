@@ -54,3 +54,18 @@ export async function createProduct(
   const { data } = await apiClient.post<Product>("/products", payload);
   return data;
 }
+
+export type UpdateProductPayload = Partial<CreateProductPayload>;
+
+export async function updateProduct(
+  id: number | string,
+  payload: UpdateProductPayload
+): Promise<Product> {
+  const { data } = await apiClient.put<Product>(`/products/${id}`, payload);
+  return data;
+}
+
+export async function deleteProduct(id: number | string): Promise<void> {
+  await apiClient.delete(`/products/${id}`);
+}
+

@@ -53,8 +53,8 @@ export function CartSummary() {
         <CardTitle>Summary</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-muted-foreground">
-          {items.length} item{items.length !== 1 ? "s" : ""}
+        <p className="text-sm text-muted-foreground">
+          {items.length} item{items.length !== 1 ? "s" : ""} in your cart
         </p>
 
         {/* Coupon / Promo code */}
@@ -96,6 +96,9 @@ export function CartSummary() {
               </Button>
             </div>
           )}
+          <p className="text-xs text-muted-foreground">
+            Hint: use <span className="font-mono font-semibold">Save10</span> for testing.
+          </p>
           {promoError && (
             <p id="promo-error" className="text-sm text-red-600 dark:text-red-400" role="alert">
               {promoError}

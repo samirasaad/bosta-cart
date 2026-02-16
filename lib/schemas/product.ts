@@ -9,12 +9,19 @@ export const createProductSchema = z.object({
     .string()
     .min(1, "Description is required.")
     .transform((s) => s.trim()),
-  price: z
-    .string()
+  /**
+   * Coerce the input into a number so the form can submit
+   * string values from the `<input type="number" />` while
+   * still giving us a strongly-typed numeric price.
+   */
+  price: z.coerce
+    .number({
+      invalid_type_error: "Price must be a number.",
+    })
     .min(1, "Price is required.")
-    .refine((v) => !Number.isNaN(Number(v)), "Price must be a number.")
-    .refine((v) => Number(v) > 0, "Price must be greater than 0.")
-    .transform((v) => Number(v)),
+    .max(1000, "Price must be less than 1,000.")
+    .refine((v) => !Number.isNaN(v), "Price must be a number.")
+    .refine((v) => v > 0, "Price must be greater than 0."),
   category: z.string().min(1, "Category is required."),
   image: z
     .string()

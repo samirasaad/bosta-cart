@@ -1,15 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { HeartIcon, ArrowLeftIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
+import { HeartIcon, ArrowLeftIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
-import { useCartStore } from "@/lib/stores/cartStore";
-import { Button } from "@/components/ui/Button";
 import type { WishlistItem as WishlistItemType } from "@/lib/types";
 import type { Product } from "@/lib/types";
 import { Heart } from "@/components/ui/lotties/HeartAnimation";
+import { ProductCard } from "@/components/features/product-list/ProductCard";
+import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
+import { useMyProductActions } from "@/hooks/useMyProductActions";
 
 const iconClass = "w-5 h-5 shrink-0";
 
@@ -25,9 +26,11 @@ function wishlistItemToProduct(item: WishlistItemType): Product {
 }
 
 export function WishlistPageContent() {
+  const router = useRouter();
   const items = useWishlistStore((s) => s.items);
   const removeItem = useWishlistStore((s) => s.removeItem);
-  const addItem = useCartStore((s) => s.addItem);
+  const localProducts = useLocalProductsStore((s) => s.items);
+  const { deleteMyProduct } = useMyProductActions();
 
   if (items.length === 0) {
     return (
@@ -61,55 +64,55 @@ export function WishlistPageContent() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {items.map((item) => {
           const product = wishlistItemToProduct(item);
+          const isOwned = localProducts.some((p) => p.id === product.id);
+
+          let overlayActions;
+          if (isOwned) {
+            const handleEditClick = (
+              e: React.MouseEvent<HTMLButtonElement>
+            ) => {
+              e.preventDefault();
+              e.stopPropagation();
+              router.push(`/products/edit/${product.id}`);
+            };
+
+            const handleDeleteClick = async (
+              e: React.MouseEvent<HTMLButtonElement>
+            ) => {
+              e.preventDefault();
+              e.stopPropagation();
+              await deleteMyProduct.mutateAsync(
+                localProducts.find((p) => p.id === product.id)!
+              );
+              removeItem(item.productId);
+            };
+
+            overlayActions = (
+              <>
+                <button
+                  type="button"
+                  onClick={handleEditClick}
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-background/90 border border-border text-muted-foreground hover:text-foreground hover:bg-background hover:border-foreground/40 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+                  aria-label={`Edit ${product.title}`}
+                >
+                  <PencilSquareIcon className="w-4 h-4" aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteClick}
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-background/90 border border-red-500 text-red-600 hover:bg-red-50 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                  aria-label={`Delete ${product.title}`}
+                  title={`Delete "${product.title}"`}
+                >
+                  <TrashIcon className="w-4 h-4" aria-hidden />
+                </button>
+              </>
+            );
+          }
+
           return (
-            <div
-              key={item.productId}
-              className="flex flex-col h-full border border-border rounded-lg bg-card overflow-hidden"
-            >
-              <Link
-                href={`/products/${item.productId}`}
-                className="relative block aspect-square bg-muted shrink-0"
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-contain p-4"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  unoptimized
-                />
-              </Link>
-              <div className="p-4 flex-1 flex flex-col min-h-0">
-                <div className="flex-1 min-h-0">
-                  <Link
-                    href={`/products/${item.productId}`}
-                    className="font-medium text-foreground line-clamp-2 hover:underline block"
-                  >
-                    {item.title}
-                  </Link>
-                  <p className="text-lg font-semibold mt-1">${item.price.toFixed(2)}</p>
-                </div>
-                <div className="flex items-center gap-2 mt-4 shrink-0">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => addItem(product)}
-                    className="inline-flex items-center gap-1.5 flex-1 min-w-0"
-                    aria-label={`Add ${item.title} to cart`}
-                  >
-                    <ShoppingCartIcon className="w-4 h-4 shrink-0" aria-hidden />
-                    Add to cart
-                  </Button>
-                  <button
-                    type="button"
-                    onClick={() => removeItem(item.productId)}
-                    className="inline-flex items-center justify-center h-9 w-9 shrink-0 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
-                    aria-label={`Remove ${item.title} from wishlist`}
-                  >
-                    <TrashIcon className="w-4 h-4 shrink-0" aria-hidden />
-                  </button>
-                </div>
-              </div>
+            <div key={item.productId} className="h-full">
+              <ProductCard product={product} overlayActions={overlayActions} />
             </div>
           );
         })}

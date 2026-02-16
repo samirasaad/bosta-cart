@@ -24,9 +24,11 @@ const iconAnim = "transition-transform duration-200 ease-out group-hover:scale-1
 export interface ProductCardProps {
   product: Product;
   isNew?: boolean;
+  /** Optional overlay rendered in the top-right over the product image (e.g. edit/delete icons). */
+  overlayActions?: React.ReactNode;
 }
 
-export function ProductCard({ product, isNew = false }: ProductCardProps) {
+export function ProductCard({ product, isNew = false, overlayActions }: ProductCardProps) {
   const token = useAuthStore((s) => s.token);
   const addItem = useCartStore((s) => s.addItem);
   const toggleWishlist = useWishlistStore((s) => s.toggleItem);
@@ -34,7 +36,7 @@ export function ProductCard({ product, isNew = false }: ProductCardProps) {
 
   return (
     <Card
-      className={`relative flex flex-col h-full ${
+      className={`relative flex flex-col h-full transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg ${
         isNew ? "ring-2 ring-emerald-500 ring-offset-2 ring-offset-background" : ""
       }`}
     >
@@ -55,6 +57,11 @@ export function ProductCard({ product, isNew = false }: ProductCardProps) {
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           unoptimized
         />
+        {overlayActions && (
+          <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
+            {overlayActions}
+          </div>
+        )}
       </Link>
       <CardHeader className="flex-1">
         <CardTitle className="line-clamp-2 text-base font-medium min-w-0">
@@ -89,7 +96,7 @@ export function ProductCard({ product, isNew = false }: ProductCardProps) {
           <button
             type="button"
             onClick={() => toggleWishlist(product)}
-            className="group inline-flex items-center justify-center h-10 w-10 rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-background hover:border-foreground/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+            className="group inline-flex items-center justify-center h-10 w-10 rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-background hover:border-foreground/30 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
             aria-label={isInWishlist ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
           >
             {isInWishlist ? (

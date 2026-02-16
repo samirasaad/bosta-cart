@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { Spinner } from "@/components/ui/Spinner";
 import { WishlistSkeleton } from "@/components/features/wishlist/WishlistSkeleton";
+import { MyProductsSkeleton } from "@/components/features/my-products/MyProductsSkeleton";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -37,6 +38,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (!mounted) {
     if (pathname?.startsWith("/wishlist")) {
       return <WishlistSkeleton />;
+    }
+    if (pathname?.startsWith("/my-products")) {
+      return <MyProductsSkeleton />;
     }
     return loadingPlaceholder;
   }

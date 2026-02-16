@@ -24,7 +24,7 @@ const variantClasses: Record<Variant, string> = {
 const sizeClasses: Record<Size, string> = {
   sm: "px-3 py-1.5 text-sm rounded",
   md: "px-4 py-2 text-base rounded-md",
-  lg: "px-6 py-3 text-lg rounded-lg",
+  lg: "px-6 py-3 rounded-lg",
 };
 
 export function Button({
@@ -42,7 +42,9 @@ export function Button({
       type="button"
       disabled={disabled ?? isLoading}
       className={[
-        "inline-flex items-center justify-center font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+        "inline-flex items-center justify-center font-medium rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+        // Subtle micro-interactions shared across variants
+        "transition-all duration-150 ease-out active:scale-[0.97]",
         variantClasses[variant],
         sizeClasses[size],
         fullWidth ? "w-full" : "",

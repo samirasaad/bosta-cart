@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowLeftIcon, ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ShoppingCartIcon, HeartIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { useProduct } from "@/hooks/useProduct";
 import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
@@ -10,6 +10,7 @@ import { isApiError } from "@/lib/api/errors";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
+import { useMyProductActions } from "@/hooks/useMyProductActions";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { ProductDetailSkeleton } from "./ProductDetailSkeleton";
@@ -45,6 +46,7 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
   const addItem = useCartStore((s) => s.addItem);
   const toggleWishlist = useWishlistStore((s) => s.toggleItem);
   const isInWishlist = useWishlistStore((s) => s.isInWishlist(Number(productId)));
+  const { deleteMyProduct } = useMyProductActions();
 
   const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
@@ -55,6 +57,7 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
   };
 
   const effectiveProduct = product ?? localProduct ?? initialProduct ?? null;
+  const isOwned = !!localProduct;
 
   if (isLoading && !effectiveProduct) {
     return <ProductDetailSkeleton />;
@@ -104,9 +107,38 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
               <p className="text-sm text-muted-foreground capitalize mb-1">
                 {effectiveProduct.category}
               </p>
-              <h1 className="text-2xl md:text-3xl font-bold min-w-0">
-                {effectiveProduct.title}
-              </h1>
+              <div className="flex items-start gap-3">
+                <h1 className="text-2xl md:text-3xl font-bold min-w-0 flex-1">
+                  {effectiveProduct.title}
+                </h1>
+                {isOwned && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        router.push(`/products/edit/${effectiveProduct.id}`)
+                      }
+                      className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-background/90 border border-border text-muted-foreground hover:text-foreground hover:bg-background hover:border-foreground/40 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+                      aria-label={`Edit ${effectiveProduct.title}`}
+                      title={`Edit \"${effectiveProduct.title}\"`}
+                    >
+                      <PencilSquareIcon className={iconClass} aria-hidden />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await deleteMyProduct.mutateAsync(effectiveProduct);
+                        router.push("/my-products");
+                      }}
+                      className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-background/90 border border-red-500 text-red-600 hover:bg-red-50 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                      aria-label={`Delete ${effectiveProduct.title}`}
+                      title={`Delete \"${effectiveProduct.title}\"`}
+                    >
+                      <TrashIcon className={iconClass} aria-hidden />
+                    </button>
+                  </div>
+                )}
+              </div>
               {effectiveProduct.rating != null && (
                 <StarRating
                   rate={effectiveProduct.rating.rate}
@@ -116,10 +148,10 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
               )}
             </CardHeader>
             <CardContent className="p-0 flex-1 flex flex-col">
-              <p className="text-lg font-semibold text-foreground mt-2">
+              <p className=" font-semibold text-foreground mt-2">
                 ${effectiveProduct.price.toFixed(2)}
               </p>
-              <p className="text-muted-foreground mt-4 flex-1">
+              <p className="text-muted-foreground mt-4 flex-1 break-all">
                 {effectiveProduct.description}
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 mt-6">
@@ -141,7 +173,7 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
                     variant="outline"
                     size="lg"
                     onClick={() => toggleWishlist(effectiveProduct)}
-                    className="group inline-flex items-center justify-center gap-2"
+                    className="group inline-flex items-center justify-center gap-2 cursor-pointer"
                     aria-label={
                       isInWishlist ? "Remove from wishlist" : "Add to wishlist"
                     }
