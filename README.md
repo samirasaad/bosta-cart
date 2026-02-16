@@ -63,8 +63,8 @@ This project demonstrates **production-level frontend architecture**, scalable c
 - Add/Remove to cart functionality  
 - Add/Remove to wishlist functionality  
 - View product details
-- similar to viewed products
-- Fetaured products
+- Related / similar products
+- Featured products
 - Deals
 - Add product
 - Edit product
@@ -93,6 +93,7 @@ This project demonstrates **production-level frontend architecture**, scalable c
 - Per-item total calculation  
 - Global cart total calculation  
 - Auto-update totals when quantity changes  
+- Promo code support (e.g. Save10)  
 
 
 ### 📦 Cart Summary
@@ -108,7 +109,7 @@ This project demonstrates **production-level frontend architecture**, scalable c
 - Auto-remove empty items
 - Dynamic empty lists UI
 
-🧠 Concepts Demonstrated
+### 🧠 Concepts Demonstrated
 - Component-driven architecture
 - State management
 - Business logic separation
@@ -160,7 +161,35 @@ This project demonstrates **production-level frontend architecture**, scalable c
 ### Tools
 - Git & GitHub  
 - ESLint  
-- Prettier  
+
+---
+
+## 🚀 Getting Started
+
+**Prerequisites:** Node.js 18+ (or per your support policy).
+
+```bash
+npm install
+npm run dev      # Development server — http://localhost:3000
+npm run build    # Production build
+npm run start    # Run production server
+npm run lint     # ESLint
+```
+
+---
+
+## 🔧 Environment Variables
+
+Optional; defaults work for local and Vercel.
+
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_APP_URL` | App URL (default: Vercel URL or `http://localhost:3000`) |
+| `NEXT_PUBLIC_API_BASE_URL` | API base URL (default: `https://fakestoreapi.com`) |
+| `NEXT_PUBLIC_SITE_NAME` | Site name (default: `Bosta Cart`) |
+| `NEXT_PUBLIC_OG_IMAGE_DEFAULT` | Optional OG image URL for metadata fallback |
+
+Product data comes from **Fake Store API**; locally created products are merged in and persisted.
 
 ---
 
@@ -184,7 +213,9 @@ bosta-cart/
 │  │  ├─ error.tsx         # Products page error boundary
 │  │  ├─ new/page.tsx      # Create product page (form)
 │  │  ├─ [id]/page.tsx     # Product details (server + client fetch)
-│  │  └─ [id]/loading.tsx  # Product details skeleton
+│  │  ├─ [id]/loading.tsx  # Product details skeleton
+│  │  └─ edit/
+│  │     └─ [id]/page.tsx  # Edit product page (reuses CreateProductForm)
 │  ├─ cart/
 │  │  ├─ page.tsx          # Cart page
 │  │  └─ loading.tsx       # Cart skeleton
