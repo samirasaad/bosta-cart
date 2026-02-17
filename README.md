@@ -12,6 +12,23 @@ This project demonstrates **production-level frontend architecture**, scalable c
 
 ---
 
+## 🧾 For Reviewers (TL;DR)
+
+- **What this project shows**
+  - Real-world e‑commerce flows: products listing, details, cart, wishlist, and "my products".
+  - API integration with Fake Store API, plus locally persisted products merged into the main catalog.
+  - Modern frontend stack: Next.js App Router, TypeScript, React Query, Zustand, RHF + Zod, Tailwind.
+- **How to review quickly**
+  - Start at the **Products** page → try filtering, sorting, and searching.
+  - Log in → create a new product, then **edit/delete it** from **My products**.
+  - Add items to **Cart** and **Wishlist**, change quantities, and verify totals/error states.
+- **Key focus**
+  - Clean, feature-based architecture and reusable UI components.
+  - Explicit error handling (toasts, error boundaries, inline error messages).
+  - Responsive, mobile‑first UI with smooth interactions.
+
+---
+
 ## 📸 Screenshots
 
 <img width="1799" height="1070" alt="Screenshot from 2026-02-16 17-40-36" src="https://github.com/user-attachments/assets/f0050f35-9ad4-4e05-92a3-741908e5824c" />
@@ -63,7 +80,7 @@ This project demonstrates **production-level frontend architecture**, scalable c
 ### 🛍 Product Handling
 - Product listing display  
 - Dynamic product rendering  
-- Product cards with image, name,description, rating, and price  
+- Product cards with image, name, description, rating, and price  
 - Add/Remove to cart functionality  
 - Add/Remove to wishlist functionality  
 - View product details
@@ -150,6 +167,21 @@ This project demonstrates **production-level frontend architecture**, scalable c
 
 ---
 
+## 🧭 User Flows
+
+- **Guest**
+  - Browse all products on `/products`, use search, category filters, and price sorting.
+  - View product details, related items, and featured/deals content.
+- **Authenticated user**
+  - Create new products on `/products/new`; they appear under **My products** and in the main listing.
+  - Edit or delete your own products via **My products** or from the product details page.
+  - Add/remove items from **Cart** and **Wishlist**, with counts and totals reflected in the header and dedicated pages.
+- **Local vs API data**
+  - Remote products are fetched from Fake Store API.
+  - Locally created products are stored in a persisted Zustand store and merged into the main list and detail views.
+
+---
+
 ## 🛠 Tech Stack
 
 ### Frontend
@@ -194,6 +226,28 @@ Optional; defaults work for local and Vercel.
 | `NEXT_PUBLIC_OG_IMAGE_DEFAULT` | Optional OG image URL for metadata fallback |
 
 Product data comes from **Fake Store API**; locally created products are merged in and persisted.
+
+---
+
+## 🧱 Architecture & Decisions
+
+- **Data fetching vs client state**
+  - **React Query** handles remote data (products, categories, single product), caching, and background refetching.
+  - **Zustand** manages client-side state such as cart, wishlist, auth, local products, recent product, and toasts.
+  - This separation keeps server data concerns and pure client concerns decoupled.
+- **Local + remote products**
+  - Local products (created by the user) get a **synthetic `id`** and optional `apiId` (real API id).
+  - Listing hooks merge local and remote products and apply client-side search, sort, and pagination.
+  - Detail views fall back to local products when the API does not know about a synthetic id.
+- **Error handling**
+  - A shared helper `getErrorMessage` in `lib/api/errors.ts` maps unknown errors to user‑friendly messages.
+  - UI surfaces errors via:
+    - Route error boundaries (`app/error.tsx`, `app/products/error.tsx`),
+    - Inline `ErrorMessage` components,
+    - Global toasts via `toastStore` and `QueryProvider`'s query/mutation error hooks.
+- **Forms and validation**
+  - `react-hook-form` + a custom `zodResolver` wrap Zod schemas for login/signup and product create/edit.
+  - Validation runs on the client with helpful messages and type‑safe form values.
 
 ---
 
@@ -325,6 +379,19 @@ bosta-cart/
 ├─ package.json
 ├─ next.config.ts
 └─ tsconfig.json
+
+---
+
+## ✅ Quality
+
+- **Linting**
+  - `npm run lint` uses `eslint-config-next` (core web vitals + TypeScript) for static analysis.
+- **Manual testing**
+  - Core flows manually tested:
+    - Browsing, filtering, and searching products.
+    - Creating, editing, and deleting local products and verifying they appear in **My products** and the main listing.
+    - Adding/removing items from cart and wishlist; updating quantities; validating totals and edge cases.
+    - Handling API failures gracefully via error boundaries, inline errors, and toasts.
 
 ---
 
