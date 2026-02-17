@@ -145,14 +145,6 @@ export function Pagination({
         )}
       </div>
 
-      {/* Summary */}
-      <p className="text-sm text-muted-foreground text-center">
-        Page <span className="font-medium text-foreground">{currentPage}</span> of{" "}
-        <span className="font-medium text-foreground">{totalPages}</span>
-        {totalCount != null && totalCount >= 0 && (
-          <> · <span className="font-medium text-foreground">{totalCount.toLocaleString()}</span> items</>
-        )}
-      </p>
     </nav>
   );
 }

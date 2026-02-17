@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { getErrorMessage } from "@/lib/api/errors";
 
 export default function ProductsError({
   error,
@@ -20,7 +21,7 @@ export default function ProductsError({
     <div className="container mx-auto px-4 py-16 text-center">
       <h1 className="text-2xl font-bold text-foreground">Failed to load products</h1>
       <p className="mt-2 text-muted-foreground">
-        {error.message || "An unexpected error occurred."}
+        {getErrorMessage(error)}
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-4">
         <Button variant="primary" onClick={reset}>

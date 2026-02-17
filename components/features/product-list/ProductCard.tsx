@@ -14,9 +14,6 @@ import {
 } from "@/components/ui/Card";
 import { StarRating } from "@/components/ui/StarRating";
 import { Button } from "@/components/ui/Button";
-import { useAuthStore } from "@/lib/stores/authStore";
-import { useCartStore } from "@/lib/stores/cartStore";
-import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import type { Product } from "@/lib/types";
 
 const iconClass = "w-4 h-4 shrink-0";
@@ -27,13 +24,25 @@ export interface ProductCardProps {
   isNew?: boolean;
   /** Optional overlay rendered in the top-right over the product image (e.g. edit/delete icons). */
   overlayActions?: React.ReactNode;
+  /** Whether the current user is authenticated; controls wishlist button visibility. */
+  isAuthenticated?: boolean;
+  /** Whether this product is currently in the wishlist. */
+  isInWishlist?: boolean;
+  /** Called when the wishlist button is pressed. */
+  onToggleWishlist?: (product: Product) => void;
+  /** Called when the add-to-cart button is pressed. */
+  onAddToCart?: (product: Product) => void;
 }
 
-export function ProductCard({ product, isNew = false, overlayActions }: ProductCardProps) {
-  const token = useAuthStore((s) => s.token);
-  const addItem = useCartStore((s) => s.addItem);
-  const toggleWishlist = useWishlistStore((s) => s.toggleItem);
-  const isInWishlist = useWishlistStore((s) => s.isInWishlist(product.id));
+export function ProductCard({
+  product,
+  isNew = false,
+  overlayActions,
+  isAuthenticated = false,
+  isInWishlist = false,
+  onToggleWishlist,
+  onAddToCart,
+}: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -100,10 +109,10 @@ export function ProductCard({ product, isNew = false, overlayActions }: ProductC
         >
           <EyeIcon className={`${iconClass} ${iconAnim}`} aria-hidden />
         </Link>
-        {token && (
+        {isAuthenticated && onToggleWishlist && (
           <button
             type="button"
-            onClick={() => toggleWishlist(product)}
+            onClick={() => onToggleWishlist(product)}
             className="group inline-flex items-center justify-center h-10 w-10 rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-background hover:border-foreground/30 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
             aria-label={isInWishlist ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
           >
@@ -114,15 +123,17 @@ export function ProductCard({ product, isNew = false, overlayActions }: ProductC
             )}
           </button>
         )}
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => addItem(product)}
-          className="group inline-flex items-center justify-center h-11 w-11 rounded-full p-0 shadow-sm hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
-          aria-label={`Add ${product.title} to cart`}
-        >
-          <ShoppingCartIcon className={`${iconClass} ${iconAnim}`} aria-hidden />
-        </Button>
+        {onAddToCart && (
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => onAddToCart(product)}
+            className="group inline-flex items-center justify-center h-11 w-11 rounded-full p-0 shadow-sm hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+            aria-label={`Add ${product.title} to cart`}
+          >
+            <ShoppingCartIcon className={`${iconClass} ${iconAnim}`} aria-hidden />
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

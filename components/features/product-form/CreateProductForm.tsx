@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { getErrorMessage } from "@/lib/api/errors";
 import { SelectableChip } from "@/components/ui/SelectableChip";
 import { CheckMark } from "@/components/ui/lotties/CheckMarkAnimation";
 
@@ -138,26 +139,14 @@ export function CreateProductForm({ editingProductId }: CreateProductFormProps) 
         >
           {!isEditMode && Boolean(error) && (
             <ErrorMessage
-              message={
-                error &&
-                typeof error === "object" &&
-                "message" in error
-                  ? String((error as { message: string }).message)
-                  : "Failed to create product."
-              }
+              title="Failed to create product"
+              message={getErrorMessage(error)}
             />
           )}
           {isEditMode && updateMyProduct.isError && (
             <ErrorMessage
-              message={
-                updateMyProduct.error &&
-                typeof updateMyProduct.error === "object" &&
-                "message" in updateMyProduct.error
-                  ? String(
-                      (updateMyProduct.error as { message: string }).message
-                    )
-                  : "Failed to update product."
-              }
+              title="Failed to update product"
+              message={getErrorMessage(updateMyProduct.error)}
             />
           )}
           <Input

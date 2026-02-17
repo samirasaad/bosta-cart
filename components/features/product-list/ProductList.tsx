@@ -15,7 +15,11 @@ import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { useRecentProductStore } from "@/lib/stores/recentProductStore";
 import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
+import { useAuthStore } from "@/lib/stores/authStore";
+import { useCartStore } from "@/lib/stores/cartStore";
+import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import { useMyProductActions } from "@/hooks/useMyProductActions";
+import { getErrorMessage } from "@/lib/api/errors";
 
 export function ProductList() {
   const router = useRouter();
@@ -28,6 +32,12 @@ export function ProductList() {
   const recentProduct = useRecentProductStore((s) => s.recentProduct);
   const localProducts = useLocalProductsStore((s) => s.items);
   const { deleteMyProduct } = useMyProductActions();
+  const token = useAuthStore((s) => s.token);
+  const addItem = useCartStore((s) => s.addItem);
+  const toggleWishlist = useWishlistStore((s) => s.toggleItem);
+  const isInWishlistSelector = useWishlistStore((s) => s.isInWishlist);
+  // Subscribe to wishlist changes so cards re-render when items are toggled.
+  const _wishlistCount = useWishlistStore((s) => s.items.length);
 
   useEffect(() => {
     const el = filtersRef.current;
@@ -73,11 +83,8 @@ export function ProductList() {
           <SortAndFilter />
         </div>
         <ErrorMessage
-          message={
-            typeof error === "object" && error && "message" in error
-              ? String((error as { message: string }).message)
-              : "Failed to load products."
-          }
+          title="Failed to load products"
+          message={getErrorMessage(error)}
           onRetry={() => refetch()}
         />
       </>
@@ -135,6 +142,38 @@ export function ProductList() {
       <div ref={filtersRef} className="scroll-mt-24 mb-6">
         <SortAndFilter />
       </div>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-muted-foreground">
+        <p>
+          Showing{" "}
+          <span className="font-semibold">
+            {displayProducts?.length ?? 0}
+          </span>
+          {typeof totalCount === "number" && totalCount > 0 ? (
+            <>
+              {" "}
+              of <span className="font-semibold">{totalCount}</span>
+            </>
+          ) : null}{" "}
+          products
+          {search
+            ? ` for “${search}”`
+            : category
+            ? ` in ${category}`
+            : ""}
+          .
+        </p>
+        {localProducts.length > 0 && (
+          <button
+            type="button"
+            onClick={() => router.push("/my-products")}
+            className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs sm:text-sm font-medium text-foreground shadow-sm transition-colors hover:border-foreground/40 hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+          >
+            View my{" "}
+            <span className="font-semibold">{localProducts.length}</span>{" "}
+            product{localProducts.length > 1 ? "s" : ""}
+          </button>
+        )}
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {displayProducts!.map((product) => {
           const isOwned = localProducts.some((p) => p.id === product.id);
@@ -184,6 +223,10 @@ export function ProductList() {
             product,
             isNew: recentProduct != null && product.id === recentProduct.id,
             overlayActions,
+            isAuthenticated: Boolean(token),
+            isInWishlist: isInWishlistSelector(product.id),
+            onToggleWishlist: toggleWishlist,
+            onAddToCart: addItem,
           };
           return <ProductCard key={product.id} {...cardProps} />;
         })}

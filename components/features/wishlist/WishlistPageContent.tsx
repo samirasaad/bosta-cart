@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { HeartIcon, ArrowLeftIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
+import { useCartStore } from "@/lib/stores/cartStore";
+import { useAuthStore } from "@/lib/stores/authStore";
 import type { WishlistItem as WishlistItemType } from "@/lib/types";
 import type { Product } from "@/lib/types";
 import { Heart } from "@/components/ui/lotties/HeartAnimation";
@@ -31,6 +33,8 @@ export function WishlistPageContent() {
   const removeItem = useWishlistStore((s) => s.removeItem);
   const localProducts = useLocalProductsStore((s) => s.items);
   const { deleteMyProduct } = useMyProductActions();
+  const token = useAuthStore((s) => s.token);
+  const addItem = useCartStore((s) => s.addItem);
 
   if (items.length === 0) {
     return (
@@ -112,7 +116,15 @@ export function WishlistPageContent() {
 
           return (
             <div key={item.productId} className="h-full">
-              <ProductCard product={product} overlayActions={overlayActions} />
+              <ProductCard
+                product={product}
+                overlayActions={overlayActions}
+                isAuthenticated={Boolean(token)}
+                // Wishlist page always represents "in wishlist"
+                isInWishlist
+                onToggleWishlist={() => removeItem(item.productId)}
+                onAddToCart={addItem}
+              />
             </div>
           );
         })}

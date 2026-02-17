@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Squares2X2Icon, ArrowRightIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
+import { useAuthStore } from "@/lib/stores/authStore";
+import { useCartStore } from "@/lib/stores/cartStore";
+import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import { ProductCard } from "@/components/features/product-list/ProductCard";
 import { useMyProductActions } from "@/hooks/useMyProductActions";
 
@@ -13,6 +16,12 @@ export function MyProductsPageContent() {
   const router = useRouter();
   const items = useLocalProductsStore((s) => s.items);
   const { deleteMyProduct } = useMyProductActions();
+  const token = useAuthStore((s) => s.token);
+  const addItem = useCartStore((s) => s.addItem);
+  const toggleWishlist = useWishlistStore((s) => s.toggleItem);
+  const isInWishlistSelector = useWishlistStore((s) => s.isInWishlist);
+  // Subscribe to wishlist changes so cards re-render when items are toggled.
+  const _wishlistCount = useWishlistStore((s) => s.items.length);
 
   if (items.length === 0) {
     return (
@@ -86,7 +95,14 @@ export function MyProductsPageContent() {
 
           return (
             <div key={product.id} className="h-full flex flex-col gap-3">
-              <ProductCard product={product} overlayActions={overlayActions} />
+              <ProductCard
+                product={product}
+                overlayActions={overlayActions}
+                isAuthenticated={Boolean(token)}
+                isInWishlist={isInWishlistSelector(product.id)}
+                onToggleWishlist={toggleWishlist}
+                onAddToCart={addItem}
+              />
             </div>
           );
         })}

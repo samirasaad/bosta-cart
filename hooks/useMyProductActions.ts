@@ -22,13 +22,17 @@ export function useMyProductActions() {
       const apiId = product.apiId ?? product.id;
       const updatedFromApi = await updateProduct(apiId, updates);
 
+      // Preserve the local synthetic id while merging fresh data from the API.
+      // This keeps "my products" entries addressable by their local id.
       const merged: Product = {
         ...product,
         ...updatedFromApi,
         ...updates,
+        id: product.id,
+        apiId: product.apiId ?? updatedFromApi.id ?? product.id,
       };
 
-      updateLocal(merged.id, merged);
+      updateLocal(product.id, merged);
       return merged;
     },
     onSuccess: () => {

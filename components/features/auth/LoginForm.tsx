@@ -10,6 +10,7 @@ import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { getErrorMessage } from "@/lib/api/errors";
 
 const iconClass = "w-5 h-5 shrink-0";
 
@@ -38,10 +39,12 @@ export function LoginForm() {
       setAuth(token, { username: data.username });
       router.push(redirectTo);
     } catch (err) {
+      const rawMessage = getErrorMessage(err);
       const message =
-        err && typeof err === "object" && "message" in err
-          ? String((err as { message: string }).message)
-          : "Login failed. Please check your credentials.";
+        rawMessage === "Something went wrong" ||
+        rawMessage === "Something went wrong. Please try again."
+          ? "Login failed. Please check your credentials and try again."
+          : rawMessage;
       setError("root", { message });
     }
   };

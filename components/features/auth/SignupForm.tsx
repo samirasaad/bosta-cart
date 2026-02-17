@@ -8,6 +8,7 @@ import { signupSchema, type SignupFormValues } from "@/lib/schemas/auth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { getErrorMessage } from "@/lib/api/errors";
 
 const iconClass = "w-5 h-5 shrink-0";
 const SIGNUP_STORAGE_KEY = "signup_credentials";
@@ -38,8 +39,8 @@ export function SignupForm() {
         );
       }
       router.push("/auth/login?from=signup");
-    } catch {
-      setError("root", { message: "Something went wrong. Please try again." });
+    } catch (err) {
+      setError("root", { message: getErrorMessage(err) });
     }
   };
 

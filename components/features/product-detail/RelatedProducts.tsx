@@ -7,6 +7,9 @@ import { getProductsByCategory } from "@/lib/api/products";
 import { ProductCard } from "@/components/features/product-list/ProductCard";
 import { ProductCardSkeleton } from "@/components/features/product-list/ProductCardSkeleton";
 import type { Product } from "@/lib/types";
+import { useAuthStore } from "@/lib/stores/authStore";
+import { useCartStore } from "@/lib/stores/cartStore";
+import { useWishlistStore } from "@/lib/stores/wishlistStore";
 
 const iconClass = "w-5 h-5 shrink-0";
 const MAX_ITEMS = 6;
@@ -27,6 +30,12 @@ export function RelatedProducts({ currentProduct }: RelatedProductsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canGoPrev, setCanGoPrev] = useState(false);
   const [canGoNext, setCanGoNext] = useState(false);
+  const token = useAuthStore((s) => s.token);
+  const addItem = useCartStore((s) => s.addItem);
+  const toggleWishlist = useWishlistStore((s) => s.toggleItem);
+  const isInWishlistSelector = useWishlistStore((s) => s.isInWishlist);
+  // Subscribe to wishlist changes so related cards re-render when items are toggled.
+  const _wishlistCount = useWishlistStore((s) => s.items.length);
 
   const { data: categoryProducts = [], isLoading } = useQuery({
     queryKey: ["products", "category", currentProduct.category],
@@ -131,7 +140,13 @@ export function RelatedProducts({ currentProduct }: RelatedProductsProps) {
             className="snap-start shrink-0"
             style={{ minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MIN_WIDTH }}
           >
-            <ProductCard product={product} />
+            <ProductCard
+              product={product}
+              isAuthenticated={Boolean(token)}
+              isInWishlist={isInWishlistSelector(product.id)}
+              onToggleWishlist={toggleWishlist}
+              onAddToCart={addItem}
+            />
           </div>
         ))}
       </div>

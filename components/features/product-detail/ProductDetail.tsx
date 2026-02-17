@@ -7,7 +7,7 @@ import { ArrowLeftIcon, ShoppingCartIcon, HeartIcon, PencilSquareIcon, TrashIcon
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { useProduct } from "@/hooks/useProduct";
 import { useLocalProductsStore } from "@/lib/stores/localProductsStore";
-import { isApiError } from "@/lib/api/errors";
+import { getErrorMessage, isApiError } from "@/lib/api/errors";
 import { useAuthStore } from "@/lib/stores/authStore";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
@@ -61,41 +61,22 @@ export function ProductDetail({ productId, initialProduct }: ProductDetailProps)
   const effectiveProduct = product ?? localProduct ?? initialProduct ?? null;
   const isOwned = !!localProduct;
 
-  // #region agent log
-  fetch("http://127.0.0.1:7242/ingest/236bc653-0054-4a73-9c0a-28effcb1fbbd", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      location: "components/features/product-detail/ProductDetail.tsx:effectiveProduct",
-      message: "ProductDetail render state",
-      data: {
-        productId,
-        hasLocalProduct: !!localProduct,
-        hasInitialProduct: !!initialProduct,
-        hasQueryProduct: !!product,
-        isOwned,
-      },
-      timestamp: Date.now(),
-      runId: "initial",
-      hypothesisId: "H1",
-    }),
-  }).catch(() => {});
-  // #endregion agent log
-
   if (isLoading && !effectiveProduct) {
     return <ProductDetailSkeleton />;
   }
 
   if (!effectiveProduct) {
     const apiError = isApiError(error || null) ? (error as any) : null;
-    const canRetry = isError && apiError ? apiError.status !== 404 : isError && !apiError;
+    const isNotFound = apiError?.status === 404;
+    const canRetry = isError && !isNotFound;
+    const title = isNotFound ? "Product not found" : "Failed to load product";
+    const message = isNotFound
+      ? "This product could not be found. It may have been removed or is unavailable."
+      : getErrorMessage(error);
     return (
       <ErrorMessage
-        message={
-          isError && error && typeof error === "object" && "message" in error
-            ? String((error as { message: string }).message)
-            : "Product not found."
-        }
+        title={title}
+        message={message}
         onRetry={canRetry ? () => refetch() : undefined}
       />
     );

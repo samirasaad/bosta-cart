@@ -37,6 +37,7 @@ export function Header() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const itemCount = useCartStore((s) => s.getItemCount());
+  const cartTotal = useCartStore((s) => s.getTotal());
   const wishlistCount = useWishlistStore((s) => s.getCount());
   const myProductsCount = useLocalProductsStore((s) => s.items.length);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -146,20 +147,29 @@ export function Header() {
               </Link>
               <Link
                 href="/cart"
-                className={`relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 ${
+                className={`inline-flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80 ${
                   pathname === "/cart" ? "font-semibold text-foreground" : "text-muted-foreground"
                 }`}
               >
-                <ShoppingCartIcon className={iconClass} aria-hidden />
-                Cart
-                {itemCount > 0 && (
-                  <span
-                    className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground text-background text-xs px-1"
-                    aria-label={`${itemCount} items in cart`}
-                  >
-                    {itemCount}
-                  </span>
-                )}
+                <span className="relative inline-flex">
+                  <ShoppingCartIcon className={iconClass} aria-hidden />
+                  {itemCount > 0 && (
+                    <span
+                      className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] px-1"
+                      aria-label={`${itemCount} items in cart`}
+                    >
+                      {itemCount}
+                    </span>
+                  )}
+                </span>
+                <span className="inline-flex items-baseline gap-1">
+                  <span>Cart</span>
+                  {cartTotal > 0 && (
+                    <span className="text-xs font-medium text-muted-foreground">
+                      ${cartTotal.toFixed(2)}
+                    </span>
+                  )}
+                </span>
               </Link>
               <div className="relative mt-2" ref={userMenuRef}>
                 <button
@@ -301,18 +311,27 @@ export function Header() {
               <Link
                 href="/cart"
                 onClick={closeMobile}
-                className={`relative flex items-center gap-2 py-3 px-3 rounded-lg ${navLinkClass(pathname === "/cart")}`}
+                className={`flex items-center gap-2 py-3 px-3 rounded-lg ${navLinkClass(pathname === "/cart")}`}
               >
-                <ShoppingCartIcon className={iconClass} aria-hidden />
-                Cart
-                {itemCount > 0 && (
-                  <span
-                    className="ml-auto flex h-6 min-w-6 items-center justify-center rounded-full bg-foreground text-background text-xs px-1.5"
-                    aria-label={`${itemCount} items in cart`}
-                  >
-                    {itemCount}
-                  </span>
-                )}
+                <span className="relative inline-flex">
+                  <ShoppingCartIcon className={iconClass} aria-hidden />
+                  {itemCount > 0 && (
+                    <span
+                      className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] px-1"
+                      aria-label={`${itemCount} items in cart`}
+                    >
+                      {itemCount}
+                    </span>
+                  )}
+                </span>
+                <span className="inline-flex items-baseline gap-1">
+                  <span>Cart</span>
+                  {cartTotal > 0 && (
+                    <span className="text-xs font-medium text-muted-foreground">
+                      ${cartTotal.toFixed(2)}
+                    </span>
+                  )}
+                </span>
               </Link>
               <Link
                 href="/wishlist"
@@ -380,18 +399,27 @@ export function Header() {
               <Link
                 href="/cart"
                 onClick={closeMobile}
-                className={`relative flex items-center gap-2 py-3 px-3 rounded-lg ${navLinkClass(pathname === "/cart")}`}
+                className={`flex items-center gap-2 py-3 px-3 rounded-lg ${navLinkClass(pathname === "/cart")}`}
               >
-                <ShoppingCartIcon className={iconClass} aria-hidden />
-                Cart
-                {mounted && itemCount > 0 && (
-                  <span
-                    className="ml-auto flex h-6 min-w-6 items-center justify-center rounded-full bg-foreground text-background text-xs px-1.5"
-                    aria-label={`${itemCount} items in cart`}
-                  >
-                    {itemCount}
-                  </span>
-                )}
+                <span className="relative inline-flex">
+                  <ShoppingCartIcon className={iconClass} aria-hidden />
+                  {mounted && itemCount > 0 && (
+                    <span
+                      className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] px-1"
+                      aria-label={`${itemCount} items in cart`}
+                    >
+                      {itemCount}
+                    </span>
+                  )}
+                </span>
+                <span className="inline-flex items-baseline gap-1">
+                  <span>Cart</span>
+                  {mounted && cartTotal > 0 && (
+                    <span className="text-xs font-medium text-muted-foreground">
+                      ${cartTotal.toFixed(2)}
+                    </span>
+                  )}
+                </span>
               </Link>
             </>
           )}
